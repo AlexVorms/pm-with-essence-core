@@ -1,7 +1,10 @@
 port: 8080
 
+router:
+  port: ":8080"
 db:
   host: "localhost"
   username: "postgres"
-  port: 5432
+  port: "5432"
   password: "postgres"
+  dbname: "pmEssenceDb"

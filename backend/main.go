@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-	"pm-with-essence/api"
 	"pm-with-essence/api/controllers"
+	"pm-with-essence/api/routes"
+	"pm-with-essence/api/service"
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 )
@@ -12,7 +13,6 @@ import (
 // @title           Project manager with Essence core
 // @version         1.0
 // @description     Серверная часть прототипа системы управления проектами с ядром Essence
-// @BasePath  /api/v1
 // @securityDefinitions.basic  BasicAuth
 func main() {
 	//set config
@@ -21,16 +21,29 @@ func main() {
 		log.Fatal("Не удалось загрузить конфиг:", err)
 	}
 
-	fmt.Printf("Запуск на порту: %d\n", cfg.Port)
-	fmt.Printf("БД Хост: %s, Пользователь: %s\n", cfg.Database.Host, cfg.Database.Username)
-	fmt.Println(cfg.Database.Password)
+	//fmt.Printf("Запуск на порту: %d\n", cfg.Router.Port)
+	//fmt.Printf("БД Хост: %s, Пользователь: %s\n", cfg.Database.Host, cfg.Database.Username)
+	//fmt.Println(cfg.Database.Password)
 
+	//init database
+	//db, err := dao.ConnectDb(cfg.Database)
+	//if err != nil {
+	//	log.Fatal("Failed to connect to database. \n", err)
+	//}
+
+	//init repositories
+
+	//init services
+	serviceR := service.NewService()
 	//init controllers
-	controller := controllers.NewController()
+	controller := controllers.NewController(serviceR)
 
-	////init routes
-	handler := api.NewRouter(*controller)
+	//init routes
+	handler := routes.NewRouter(*controller)
 	fmt.Printf("Swagger running on http://localhost:8080/swagger/index.html")
-	handler.InitRoutes()
+	_, err = handler.InitRoutes(cfg.Router)
+	if err != nil {
+		log.Fatalf("Failed to run server: %v", err)
+	}
 
 }

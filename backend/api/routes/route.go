@@ -1,7 +1,8 @@
-package api
+package routes
 
 import (
 	"pm-with-essence/api/controllers"
+	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 
 	"github.com/gin-contrib/cors"
@@ -11,13 +12,13 @@ import (
 )
 
 type Router struct {
-	controller *controllers.Controller
+	controller controllers.Controller
 }
 
 func NewRouter(controller controllers.Controller) *Router {
-	return &Router{controller: &controller}
+	return &Router{controller: controller}
 }
-func (r *Router) InitRoutes() *gin.Engine {
+func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
@@ -29,15 +30,16 @@ func (r *Router) InitRoutes() *gin.Engine {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	controller := router.Group("/api")
 	{
-		controller.GET("", r.controller.GETRequest)
+		controller.GET("/get", r.controller.GETRequest)
 	}
 	router.NoRoute(func(c *gin.Context) {
 		// In gin this is how you return a JSON response
 		c.JSON(404, gin.H{"message": "Not found"})
 	})
-	err := router.Run(":8080")
+	err := router.Run(cfg.Port)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return router
+
+	return router, nil
 }

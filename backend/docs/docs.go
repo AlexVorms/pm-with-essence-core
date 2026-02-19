@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api": {
+        "/api/get": {
             "get": {
                 "description": "get string by ID",
                 "consumes": [
@@ -31,7 +31,57 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.StatusError"
+                        }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "errors.Status": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "x-enum-comments": {
+                "BadRequest": "400",
+                "Forbidden": "403",
+                "NotFound": "404",
+                "Unauthorized": "401",
+                "UnsupportedMediaType": "415"
+            },
+            "x-enum-descriptions": [
+                "400",
+                "401",
+                "403",
+                "404",
+                "415"
+            ],
+            "x-enum-varnames": [
+                "BadRequest",
+                "Unauthorized",
+                "Forbidden",
+                "NotFound",
+                "UnsupportedMediaType"
+            ]
+        },
+        "errors.StatusError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/errors.Status"
                 }
             }
         }
@@ -46,8 +96,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Project manager with Essence core",
 	Description:      "Серверная часть прототипа системы управления проектами с ядром Essence",
