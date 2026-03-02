@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"pm-with-essence/api/controllers"
+	"pm-with-essence/cmd/api/controllers"
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 
@@ -12,11 +12,14 @@ import (
 )
 
 type Router struct {
-	controller controllers.Controller
+	controller     controllers.Controller
+	userController controllers.UserController
 }
 
-func NewRouter(controller controllers.Controller) *Router {
-	return &Router{controller: controller}
+func NewRouter(controller controllers.Controller, userController controllers.UserController) *Router {
+	return &Router{
+		controller:     controller,
+		userController: userController}
 }
 func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router := gin.Default()
@@ -31,6 +34,12 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	controller := router.Group("/api")
 	{
 		controller.GET("/get", r.controller.GETRequest)
+	}
+	userController := controller.Group("")
+	{
+		userController.POST("/register", r.userController.Register)
+		userController.POST("/login", r.userController.Login)
+		userController.GET("/profile", r.userController.Profile)
 	}
 	router.NoRoute(func(c *gin.Context) {
 		// In gin this is how you return a JSON response

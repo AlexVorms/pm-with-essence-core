@@ -7,4 +7,4 @@ db:
   username: "postgres"
   port: "5432"
   password: "postgres"
-  dbname: "pmEssenceDb"
+  dbname: "pm-with-Essence-Db"

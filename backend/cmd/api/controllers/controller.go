@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"pm-with-essence/api/service"
+	"pm-with-essence/cmd/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,6 @@ func NewController(service *service.Service) *Controller {
 // @Accept       json
 // @Produce      json
 // @Success      200
-// @Failure      400  {object}  errors.StatusError
 // @Router       /api/get [get]
 func (ct Controller) GETRequest(c *gin.Context) {
 	err := ct.service.Run()
