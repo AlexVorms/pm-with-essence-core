@@ -35,11 +35,11 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	{
 		controller.GET("/get", r.controller.GETRequest)
 	}
-	userController := controller.Group("")
+	userController := router.Group("/")
 	{
-		userController.POST("/register", r.userController.Register)
-		userController.POST("/login", r.userController.Login)
-		userController.GET("/profile", r.userController.Profile)
+		userController.POST("register", r.userController.Register)
+		userController.POST("login", r.userController.Login)
+		userController.GET("profile", r.userController.Profile)
 	}
 	router.NoRoute(func(c *gin.Context) {
 		// In gin this is how you return a JSON response

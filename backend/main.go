@@ -5,7 +5,9 @@ import (
 	"log"
 	"pm-with-essence/cmd/api/controllers"
 	"pm-with-essence/cmd/api/routes"
+	"pm-with-essence/cmd/repository"
 	"pm-with-essence/cmd/service"
+	userService "pm-with-essence/cmd/service/userService"
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 	"pm-with-essence/internal/database"
@@ -34,12 +36,15 @@ func main() {
 	//}
 
 	//init repositories
+	userStorage := repository.NewUserStorage(db)
 
 	//init services
 	serviceR := service.NewService(db)
+	newUserService := userService.NewUserService(userStorage)
+
 	//init controllers
 	controller := controllers.NewController(serviceR)
-	userController := controllers.NewUserController()
+	userController := controllers.NewUserController(newUserService)
 
 	//init routes
 	handler := routes.NewRouter(*controller,

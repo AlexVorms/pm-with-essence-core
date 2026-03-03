@@ -4,15 +4,19 @@ import (
 	"log"
 	"net/http"
 	"pm-with-essence/cmd/api/model/userDTO"
+	"pm-with-essence/cmd/service/userService"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
+	userService *userService.UserService
 }
 
-func NewUserController() *UserController {
-	return &UserController{}
+func NewUserController(userService *userService.UserService) *UserController {
+	return &UserController{
+		userService: userService,
+	}
 }
 
 // Register
