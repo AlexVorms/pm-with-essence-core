@@ -14,12 +14,16 @@ import (
 type Router struct {
 	controller     controllers.Controller
 	userController controllers.UserController
+	taskController controllers.TaskController
 }
 
-func NewRouter(controller controllers.Controller, userController controllers.UserController) *Router {
+func NewRouter(controller controllers.Controller,
+	userController controllers.UserController,
+	taskController controllers.TaskController) *Router {
 	return &Router{
 		controller:     controller,
-		userController: userController}
+		userController: userController,
+		taskController: taskController}
 }
 func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router := gin.Default()
@@ -40,6 +44,14 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 		userController.POST("register", r.userController.Register)
 		userController.POST("login", r.userController.Login)
 		userController.GET("profile", r.userController.Profile)
+	}
+	taskController := router.Group("/task")
+	{
+		taskController.POST("", r.taskController.CreateTask)
+		taskController.GET("", r.taskController.GetAllTasks)
+		taskController.GET("/:id", r.taskController.GetTask)
+		taskController.DELETE("/:taskId", r.taskController.DeleteTask)
+		taskController.PUT("/:taskId", r.taskController.UpdateTask)
 	}
 	router.NoRoute(func(c *gin.Context) {
 		// In gin this is how you return a JSON response
