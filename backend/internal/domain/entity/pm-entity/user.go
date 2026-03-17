@@ -1,4 +1,4 @@
-package entity
+package pm_entity
 
 import "github.com/google/uuid"
 

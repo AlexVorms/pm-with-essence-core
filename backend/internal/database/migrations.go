@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"pm-with-essence/config"
-	"pm-with-essence/internal/domain/entity"
+	"pm-with-essence/internal/domain/entity/pm-entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -43,7 +43,11 @@ func IsDatabaseExist(db *gorm.DB, dbName string) error {
 }
 func AutoMigration(db *gorm.DB) {
 	err := db.AutoMigrate(
-		&entity.User{})
+		&pm_entity.User{},
+		&pm_entity.Project{},
+		&pm_entity.Board{},
+		&pm_entity.Column{},
+		&pm_entity.Issue{})
 	if err != nil {
 		log.Fatal("Failed to migrate database. \n", err)
 	}

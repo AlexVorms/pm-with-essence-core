@@ -7,6 +7,7 @@ import (
 	"pm-with-essence/cmd/api/routes"
 	"pm-with-essence/cmd/repository"
 	"pm-with-essence/cmd/service"
+	"pm-with-essence/cmd/service/projectService"
 	"pm-with-essence/cmd/service/taskService"
 	userService "pm-with-essence/cmd/service/userService"
 	"pm-with-essence/config"
@@ -37,23 +38,27 @@ func main() {
 	//}
 
 	//init repositories
+	projectStorage := repository.NewProjectStorage(db)
 	userStorage := repository.NewUserStorage(db)
 	taskStorage := repository.NewTaskStorage(db)
 
 	//init services
 	serviceR := service.NewService(db)
+	newProjectService := projectService.NewProjectService(projectStorage)
 	newUserService := userService.NewUserService(userStorage)
 	newTaskService := taskService.NewTaskService(taskStorage)
 
 	//init controllers
 	controller := controllers.NewController(serviceR)
+	newProjectController := controllers.NewProjectController(newProjectService)
 	userController := controllers.NewUserController(newUserService)
 	taskController := controllers.NewTaskController(newTaskService)
 
 	//init routes
 	handler := routes.NewRouter(*controller,
 		*userController,
-		*taskController)
+		*taskController,
+		*newProjectController)
 	fmt.Printf("Swagger running on http://localhost:8080/swagger/index.html")
 	_, err = handler.InitRoutes(cfg.Router)
 	if err != nil {
