@@ -11,19 +11,19 @@ type HttpError struct {
 	Err     error
 }
 
-func NewPostgresWriteError(err error) *HttpError {
+func NewPostgresWriteError(err error, message string) *HttpError {
 	return &HttpError{
 		Err:     err,
 		Code:    http.StatusInternalServerError,
-		Message: "failed to write data to database",
+		Message: message,
 	}
 }
 
-func NewPostgresReadError(err error) *HttpError {
+func NewPostgresReadError(err error, message string) *HttpError {
 	return &HttpError{
 		Err:     err,
 		Code:    http.StatusInternalServerError,
-		Message: "failed to read data from database",
+		Message: message,
 	}
 }
 
@@ -31,15 +31,15 @@ func NewPostgresDuplicatedKeyError(err error) *HttpError {
 	return &HttpError{
 		Err:     err,
 		Code:    http.StatusInternalServerError,
-		Message: err.Error(),
+		Message: "this key already exists",
 	}
 }
 
-func NewNotFoundError(err error) *HttpError {
+func NewNotFoundError(err error, message string) *HttpError {
 	return &HttpError{
 		Err:     err,
 		Code:    http.StatusNotFound,
-		Message: "not found",
+		Message: message,
 	}
 }
 

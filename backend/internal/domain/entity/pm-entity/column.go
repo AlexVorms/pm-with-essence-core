@@ -12,3 +12,13 @@ type Column struct {
 	Board   *Board    `json:"board"`
 	Issues  []Issue   `json:"issues"`
 }
+
+func CreateColumnEntity(Name string, IsFinal bool, Order int, boardID uuid.UUID) *Column {
+	return &Column{
+		ID:      uuid.New(),
+		Name:    Name,
+		IsFinal: IsFinal,
+		Order:   Order,
+		BoardID: boardID,
+	}
+}

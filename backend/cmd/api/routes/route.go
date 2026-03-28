@@ -16,17 +16,20 @@ type Router struct {
 	userController    controllers.UserController
 	taskController    controllers.TaskController
 	projectController controllers.ProjectController
+	boardController   controllers.BoardController
 }
 
 func NewRouter(controller controllers.Controller,
 	userController controllers.UserController,
 	taskController controllers.TaskController,
-	projectController controllers.ProjectController) *Router {
+	projectController controllers.ProjectController,
+	boardController controllers.BoardController) *Router {
 	return &Router{
 		controller:        controller,
 		userController:    userController,
 		taskController:    taskController,
-		projectController: projectController}
+		projectController: projectController,
+		boardController:   boardController}
 }
 func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router := gin.Default()
@@ -58,7 +61,15 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	}
 	projectController := router.Group("/project")
 	{
-		projectController.POST("")
+		projectController.POST("", r.projectController.CreateProject)
+		projectController.GET("", r.projectController.GetAllProjects)
+		projectController.GET("/:projectId", r.projectController.GetProject)
+		projectController.DELETE("/:projectId", r.projectController.DeleteProject)
+		projectController.PUT("/:projectId", r.projectController.UpdateProject)
+	}
+	boardController := router.Group("/board")
+	{
+		boardController.POST("")
 	}
 	router.NoRoute(func(c *gin.Context) {
 		// In gin this is how you return a JSON response
