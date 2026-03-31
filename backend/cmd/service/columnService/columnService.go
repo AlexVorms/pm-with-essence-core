@@ -33,3 +33,49 @@ func (p *ColumnService) CreateColumn(boardID uuid.UUID, model columnDTO.ColumnDT
 	}
 	return nil
 }
+func (c *ColumnService) DeleteColumn(columnID uuid.UUID) *errors.HttpError {
+	_, err := c.columnStorage.GetColumn(columnID)
+	if err != nil {
+		return errors.NewNotFoundError(err, "This column doesn't exist")
+	}
+	err = c.columnStorage.DeleteColumn(columnID)
+	if err != nil {
+		return errors.NewPostgresWriteError(err, "Error while deleting column")
+	}
+	return nil
+}
+func (c *ColumnService) UpdateColumn(columnID uuid.UUID, model columnDTO.ColumnDTO) *errors.HttpError {
+	column, err := c.columnStorage.GetColumn(columnID)
+	if err != nil {
+		return errors.NewNotFoundError(err, "This column doesn't exist")
+	}
+	column.IsFinal = model.IsFinal
+	column.Name = model.Name
+	err = c.columnStorage.UpdateColumn(column)
+	if err != nil {
+		return errors.NewPostgresWriteError(err, "Error while updating column")
+	}
+	return nil
+}
+func (c *ColumnService) ChangeColumnOrder(model columnDTO.UpdateColumnOrderDTO) *errors.HttpError {
+	firstColumn, err := c.columnStorage.GetColumn(model.FirstColumnID)
+	if err != nil {
+		return errors.NewNotFoundError(err, "First column doesn't exist")
+	}
+	secondColumn, err1 := c.columnStorage.GetColumn(model.SecondColumnID)
+	if err1 != nil {
+		return errors.NewNotFoundError(err1, "Second column doesn't exist")
+	}
+	firstColumn.Order = model.FirstOrder
+	secondColumn.Order = model.SecondOrder
+
+	err = c.columnStorage.UpdateColumn(firstColumn)
+	if err != nil {
+		return errors.NewPostgresWriteError(err, "Error while updating column")
+	}
+	err = c.columnStorage.UpdateColumn(secondColumn)
+	if err != nil {
+		return errors.NewPostgresWriteError(err, "Error while updating column")
+	}
+	return nil
+}

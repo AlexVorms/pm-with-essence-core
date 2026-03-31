@@ -51,12 +51,12 @@ func (ps *ProjectController) CreateProject(c *gin.Context) {
 // @Tags Project
 // @Description delete project
 // @Produce json
-// @Param project_id path string true "Project ID"
+// @Param projectId path string true "Project ID"
 // @Success 200
 // @Router       /project/{projectId} [delete]
 func (ps *ProjectController) DeleteProject(c *gin.Context) {
-	project_id := c.Param("project_id")
-	parsedUUID, err1 := uuid.Parse(project_id)
+	projectId := c.Param("projectId")
+	parsedUUID, err1 := uuid.Parse(projectId)
 	if err1 != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
@@ -76,13 +76,13 @@ func (ps *ProjectController) DeleteProject(c *gin.Context) {
 // @Tags Project
 // @Description update project
 // @Produce json
-// @Param project_id path string true "Project ID"
+// @Param projectId path string true "Project ID"
 // @Param newProjectDTO body projectDTO.ProjectDTO true "newProjectDTO"
 // @Success 200
-// @Router       /project/{projectId} [update]
+// @Router       /project/{projectId} [put]
 func (ps *ProjectController) UpdateProject(c *gin.Context) {
-	project_id := c.Param("project_id")
-	parsedUUID, err := uuid.Parse(project_id)
+	projectId := c.Param("projectId")
+	parsedUUID, err := uuid.Parse(projectId)
 	if err != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -112,7 +112,7 @@ func (ps *ProjectController) GetAllProjects(c *gin.Context) {
 // @Tags Project
 // @Description update project
 // @Produce json
-// @Param project_id path string true "Project ID"
+// @Param projectId path string true "Project ID"
 // @Success 200
 // @Router       /project/{projectId} [get]
 func (ps *ProjectController) GetProject(c *gin.Context) {

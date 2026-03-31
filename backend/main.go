@@ -6,7 +6,6 @@ import (
 	"pm-with-essence/cmd/api/controllers"
 	"pm-with-essence/cmd/api/routes"
 	"pm-with-essence/cmd/repository"
-	"pm-with-essence/cmd/service"
 	"pm-with-essence/cmd/service/boardService"
 	"pm-with-essence/cmd/service/columnService"
 	"pm-with-essence/cmd/service/projectService"
@@ -47,27 +46,26 @@ func main() {
 	columnStorage := repository.NewColumnStorage(db)
 
 	//init services
-	serviceR := service.NewService(db)
 	newProjectService := projectService.NewProjectService(projectStorage)
 	newUserService := userService.NewUserService(userStorage)
-	newTaskService := taskService.NewTaskService(taskStorage)
+	newTaskService := taskService.NewTaskService(taskStorage, columnStorage)
 	newColumnService := columnService.NewColumnService(columnStorage, boardStorage)
 	newBoardService := boardService.NewBoardService(boardStorage, newColumnService, newProjectService)
 
-	//init inteface
 	//init controllers
-	controller := controllers.NewController(serviceR)
 	newProjectController := controllers.NewProjectController(newProjectService)
 	userController := controllers.NewUserController(newUserService)
 	taskController := controllers.NewTaskController(newTaskService)
 	boardController := controllers.NewBoardController(newBoardService)
+	columnController := controllers.NewColumnController(newColumnService)
 
 	//init routes
-	handler := routes.NewRouter(*controller,
+	handler := routes.NewRouter(
 		*userController,
 		*taskController,
 		*newProjectController,
-		*boardController)
+		*boardController,
+		*columnController)
 	fmt.Printf("Swagger running on http://localhost:8080/swagger/index.html")
 	_, err = handler.InitRoutes(cfg.Router)
 	if err != nil {

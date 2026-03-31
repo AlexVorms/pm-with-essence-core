@@ -18,7 +18,7 @@ func NewBoardStorage(db *gorm.DB) *BoardStorage {
 }
 func (b *BoardStorage) GetBoard(boardID uuid.UUID) (*pm_entity.Board, error) {
 	var board *pm_entity.Board
-	err := b.db.Model(pm_entity.Board{}).Find(&board, boardID).Error
+	err := b.db.Model(pm_entity.Board{}).Preload("Columns").Find(&board, boardID).Error
 	if err != nil {
 		return nil, err
 	}

@@ -12,24 +12,25 @@ import (
 )
 
 type Router struct {
-	controller        controllers.Controller
 	userController    controllers.UserController
 	taskController    controllers.TaskController
 	projectController controllers.ProjectController
 	boardController   controllers.BoardController
+	columnController  controllers.ColumnController
 }
 
-func NewRouter(controller controllers.Controller,
+func NewRouter(
 	userController controllers.UserController,
 	taskController controllers.TaskController,
 	projectController controllers.ProjectController,
-	boardController controllers.BoardController) *Router {
+	boardController controllers.BoardController,
+	columnController controllers.ColumnController) *Router {
 	return &Router{
-		controller:        controller,
 		userController:    userController,
 		taskController:    taskController,
 		projectController: projectController,
-		boardController:   boardController}
+		boardController:   boardController,
+		columnController:  columnController}
 }
 func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router := gin.Default()
@@ -41,10 +42,6 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router.Use(cors.New(config))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	controller := router.Group("/api")
-	{
-		controller.GET("/get", r.controller.GETRequest)
-	}
 	userController := router.Group("/")
 	{
 		userController.POST("register", r.userController.Register)
@@ -53,11 +50,13 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	}
 	taskController := router.Group("/task")
 	{
-		taskController.POST("", r.taskController.CreateTask)
+		taskController.POST("/:columnId", r.taskController.CreateTask)
 		taskController.GET("", r.taskController.GetAllTasks)
-		taskController.GET("/:id", r.taskController.GetTask)
+		taskController.GET("/:taskId", r.taskController.GetTask)
 		taskController.DELETE("/:taskId", r.taskController.DeleteTask)
 		taskController.PUT("/:taskId", r.taskController.UpdateTask)
+		taskController.PUT("/column/:columnId/task/:taskId", r.taskController.ChangeTaskColumn)
+		taskController.PUT("/:taskId/complete", r.taskController.FinishTask)
 	}
 	projectController := router.Group("/project")
 	{
@@ -69,7 +68,18 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	}
 	boardController := router.Group("/board")
 	{
-		boardController.POST("")
+		boardController.POST("/:projectId", r.boardController.CreateBoard)
+		boardController.GET("/all-boards/:projectId", r.boardController.GetBoards)
+		boardController.GET("/:boardId", r.boardController.GetBoard)
+		boardController.DELETE("/:boardId", r.boardController.DeleteBoard)
+		boardController.PUT("/:boardId", r.boardController.UpdateBoard)
+	}
+	columnController := router.Group("/column")
+	{
+		columnController.POST("/:boardID", r.columnController.CreateColumn)
+		columnController.PUT("/:columnID", r.columnController.UpdateColumn)
+		columnController.DELETE("/:columnID", r.columnController.DeleteColumn)
+		columnController.PUT("", r.columnController.UpdateColumnOrder)
 	}
 	router.NoRoute(func(c *gin.Context) {
 		// In gin this is how you return a JSON response

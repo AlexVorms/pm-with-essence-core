@@ -29,9 +29,9 @@ func NewBoardController(boardService *boardService.BoardService) *BoardControlle
 // @Param projectId path string true "Project ID"
 // @Param BoardDTO body boardDTO.BoardDTO true "BoardDTO"
 // @Success 200
-// @Router       /board/{projectID} [post]
+// @Router       /board/{projectId} [post]
 func (b *BoardController) CreateBoard(c *gin.Context) {
-	projectId := c.Param("project_id")
+	projectId := c.Param("projectId")
 	parsedUUID, err1 := uuid.Parse(projectId)
 	if err1 != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err1)
@@ -54,16 +54,16 @@ func (b *BoardController) CreateBoard(c *gin.Context) {
 }
 
 // DeleteBoard
-// @Summary create new board
+// @Summary delete board
 // @Tags Board
-// @Description create new board
+// @Description delete board
 // @Produce json
-// @Param boardID path string true "Board ID"
+// @Param boardId path string true "Board ID"
 // @Success 200
-// @Router       /board/{boardID} [delete]
+// @Router       /board/{boardId} [delete]
 func (b *BoardController) DeleteBoard(c *gin.Context) {
-	boardID := c.Param("boardID")
-	parsedUUID, err1 := uuid.Parse(boardID)
+	boardId := c.Param("boardId")
+	parsedUUID, err1 := uuid.Parse(boardId)
 	if err1 != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
@@ -83,12 +83,12 @@ func (b *BoardController) DeleteBoard(c *gin.Context) {
 // @Tags Board
 // @Description get board
 // @Produce json
-// @Param boardID path string true "Board ID"
+// @Param boardId path string true "Board ID"
 // @Success 200
-// @Router       /board/{boardID} [get]
+// @Router       /board/{boardId} [get]
 func (b *BoardController) GetBoard(c *gin.Context) {
-	boardID := c.Param("boardID")
-	parsedUUID, err1 := uuid.Parse(boardID)
+	boardId := c.Param("boardId")
+	parsedUUID, err1 := uuid.Parse(boardId)
 	if err1 != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
@@ -104,16 +104,16 @@ func (b *BoardController) GetBoard(c *gin.Context) {
 }
 
 // GetBoards
-// @Summary get board
+// @Summary get all boards
 // @Tags Board
-// @Description get board
+// @Description get all boards
 // @Produce json
-// @Param boardID path string true "Board ID"
+// @Param projectId path string true "Project ID"
 // @Success 200
-// @Router       /board/{boardID} [put]
+// @Router       /board/all-boards/{projectId} [get]
 func (b *BoardController) GetBoards(c *gin.Context) {
-	boardID := c.Param("boardID")
-	parsedUUID, err1 := uuid.Parse(boardID)
+	projectId := c.Param("projectId")
+	parsedUUID, err1 := uuid.Parse(projectId)
 	if err1 != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
@@ -133,13 +133,13 @@ func (b *BoardController) GetBoards(c *gin.Context) {
 // @Tags Board
 // @Description update board
 // @Produce json
-// @Param projectId path string true "Project ID"
+// @Param boardId path string true "Board ID"
 // @Param BoardDTO body boardDTO.BoardDTO true "BoardDTO"
 // @Success 200
-// @Router       /board/{projectID} [post]
+// @Router       /board/{boardId} [post]
 func (b *BoardController) UpdateBoard(c *gin.Context) {
-	boardID := c.Param("boardID")
-	parsedUUID, err1 := uuid.Parse(boardID)
+	boardId := c.Param("boardId")
+	parsedUUID, err1 := uuid.Parse(boardId)
 	if err1 != nil {
 		fmt.Println("Ошибка парсинга UUID: ", err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
