@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"pm-with-essence/cmd/api/controllers"
 	"pm-with-essence/cmd/api/routes"
 	"pm-with-essence/cmd/repository"
+	"pm-with-essence/cmd/service/authService"
 	"pm-with-essence/cmd/service/boardService"
 	"pm-with-essence/cmd/service/columnService"
 	"pm-with-essence/cmd/service/projectService"
@@ -14,14 +16,26 @@ import (
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 	"pm-with-essence/internal/database"
+
+	"github.com/joho/godotenv"
 )
 
 // @title           Project manager with Essence core
 // @version         1.0
 // @description     Серверная часть прототипа системы управления проектами с ядром Essence
-// @securityDefinitions.basic  BasicAuth
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Введите JWT токен в формате: Bearer {token}
+
 func main() {
 	//set config
+	if err := godotenv.Load(); err != nil {
+		log.Println(".env file not found")
+	}
+	fmt.Println(os.Getenv("JWT_SECRET"))
+
 	cfg, err := config.SetConfig()
 	if err != nil {
 		log.Fatal("Не удалось загрузить конфиг:", err)
@@ -30,6 +44,7 @@ func main() {
 	fmt.Printf("Запуск на порту: %d\n", cfg.Router.Port)
 	fmt.Printf("БД Хост: %s, Пользователь: %s\n", cfg.Database.Host, cfg.Database.Username)
 	fmt.Println(cfg.Database.Password, cfg.Database.DBName)
+	fmt.Printf(cfg.JWTSecret)
 
 	//init database
 	db, err := database.ConnectDb(cfg.Database)
@@ -48,13 +63,15 @@ func main() {
 	//init services
 	newProjectService := projectService.NewProjectService(projectStorage)
 	newUserService := userService.NewUserService(userStorage)
+	newJWTService := authService.NewJwtService(cfg.JWTSecret)
+	newAuthService := authService.NewAuthService(userStorage, newJWTService)
 	newTaskService := taskService.NewTaskService(taskStorage, columnStorage)
 	newColumnService := columnService.NewColumnService(columnStorage, boardStorage)
 	newBoardService := boardService.NewBoardService(boardStorage, newColumnService, newProjectService)
 
 	//init controllers
 	newProjectController := controllers.NewProjectController(newProjectService)
-	userController := controllers.NewUserController(newUserService)
+	userController := controllers.NewUserController(newUserService, newAuthService)
 	taskController := controllers.NewTaskController(newTaskService)
 	boardController := controllers.NewBoardController(newBoardService)
 	columnController := controllers.NewColumnController(newColumnService)
@@ -65,7 +82,8 @@ func main() {
 		*taskController,
 		*newProjectController,
 		*boardController,
-		*columnController)
+		*columnController,
+		*newJWTService)
 	fmt.Printf("Swagger running on http://localhost:8080/swagger/index.html")
 	_, err = handler.InitRoutes(cfg.Router)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	projectDTO "pm-with-essence/cmd/api/model/projectDTO"
+	"pm-with-essence/cmd/api/model/responseDTO"
 	"pm-with-essence/cmd/service/projectService"
 
 	"github.com/gin-gonic/gin"
@@ -28,9 +29,16 @@ func NewProjectController(projectService *projectService.ProjectService) *Projec
 // @Produce json
 // @Param newProjectDTO body projectDTO.ProjectDTO true "newProjectDTO"
 // @Success 200
+// @Failure 401 {object} responseDTO.ErrorResponse
+// @Failure 500 {object} responseDTO.ErrorResponse
+// @Security BearerAuth
 // @Router       /project [post]
 func (ps *ProjectController) CreateProject(c *gin.Context) {
+	userID := c.GetString("userID")
+	log.Println("userID:", userID)
+
 	var newProjectDTO projectDTO.ProjectDTO
+
 	if err := c.ShouldBindJSON(&newProjectDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -39,7 +47,9 @@ func (ps *ProjectController) CreateProject(c *gin.Context) {
 	err := ps.projectService.CreateProject(newProjectDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Success"})

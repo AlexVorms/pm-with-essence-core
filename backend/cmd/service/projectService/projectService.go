@@ -3,7 +3,7 @@ package projectService
 import (
 	"pm-with-essence/cmd/api/model/projectDTO"
 	"pm-with-essence/cmd/repository"
-	"pm-with-essence/internal/api/errors"
+	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"github.com/google/uuid"
@@ -18,7 +18,7 @@ func NewProjectService(projectStorage *repository.ProjectStorage) *ProjectServic
 		projectStorage: projectStorage,
 	}
 }
-func (p *ProjectService) CreateProject(model projectDTO.ProjectDTO) *errors.HttpError {
+func (p *ProjectService) CreateProject(model projectDTO.ProjectDTO) *app_errors.HttpError {
 	project := pm_entity.Project{
 		ID:          uuid.New(),
 		Name:        model.Name,
@@ -27,35 +27,35 @@ func (p *ProjectService) CreateProject(model projectDTO.ProjectDTO) *errors.Http
 	}
 	err := p.projectStorage.CreateProject(project)
 	if err != nil {
-		return errors.NewPostgresWriteError(err, "faled database to create project")
+		return app_errors.NewPostgresWriteError(err, "faled database to create project")
 	}
 	return nil
 }
-func (p *ProjectService) DeleteProject(projectId uuid.UUID) *errors.HttpError {
+func (p *ProjectService) DeleteProject(projectId uuid.UUID) *app_errors.HttpError {
 	err, _ := p.projectStorage.GetProject(projectId)
 	if err != nil {
-		return errors.NewNotFoundError(err, "this project doesn't exist")
+		return app_errors.NewNotFoundError(err, "this project doesn't exist")
 	}
 	err = p.projectStorage.DeleteProject(projectId)
 	if err != nil {
-		return errors.NewPostgresWriteError(err, "faled to delete the project")
+		return app_errors.NewPostgresWriteError(err, "faled to delete the project")
 	}
 	return nil
 }
-func (p *ProjectService) GetProject(projectId uuid.UUID) (*pm_entity.Project, *errors.HttpError) {
+func (p *ProjectService) GetProject(projectId uuid.UUID) (*pm_entity.Project, *app_errors.HttpError) {
 	err, project := p.projectStorage.GetProject(projectId)
 	if err != nil {
-		return nil, errors.NewPostgresReadError(err, "this project doesn't exist")
+		return nil, app_errors.NewPostgresReadError(err, "this project doesn't exist")
 	}
 	return project, nil
 }
-func (p *ProjectService) GetAllProjects(model projectDTO.ProjectDTO) *errors.HttpError {
+func (p *ProjectService) GetAllProjects(model projectDTO.ProjectDTO) *app_errors.HttpError {
 	return nil
 }
-func (p *ProjectService) UpdateProject(projectID uuid.UUID, model projectDTO.ProjectDTO) *errors.HttpError {
+func (p *ProjectService) UpdateProject(projectID uuid.UUID, model projectDTO.ProjectDTO) *app_errors.HttpError {
 	err, _ := p.projectStorage.GetProject(projectID)
 	if err != nil {
-		return errors.NewNotFoundError(err, "this project doesn't exist")
+		return app_errors.NewNotFoundError(err, "this project doesn't exist")
 	}
 	project := pm_entity.Project{
 		ID:          projectID,
@@ -65,7 +65,7 @@ func (p *ProjectService) UpdateProject(projectID uuid.UUID, model projectDTO.Pro
 	}
 	err = p.projectStorage.UpdateProject(project)
 	if err != nil {
-		return errors.NewPostgresWriteError(err, "faled to update the project")
+		return app_errors.NewPostgresWriteError(err, "faled to update the project")
 	}
 	return nil
 }

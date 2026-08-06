@@ -6,7 +6,7 @@ import (
 	"pm-with-essence/cmd/repository"
 	"pm-with-essence/cmd/service/columnService"
 	"pm-with-essence/cmd/service/projectService"
-	"pm-with-essence/internal/api/errors"
+	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"github.com/google/uuid"
@@ -27,16 +27,16 @@ func NewBoardService(boardStorage *repository.BoardStorage,
 		projectService: projectService,
 	}
 }
-func (b *BoardService) CreateBoard(projectID uuid.UUID, model boardDTO.BoardDTO) *errors.HttpError {
+func (b *BoardService) CreateBoard(projectID uuid.UUID, model boardDTO.BoardDTO) *app_errors.HttpError {
 	isProjectExist, err := b.projectService.IsProjectExist(projectID)
 	if !isProjectExist {
-		return errors.NewNotFoundError(err, "This project doesn't exist")
+		return app_errors.NewNotFoundError(err, "This project doesn't exist")
 	}
 
 	board := pm_entity.CreateBoardEntity(model.Name, model.Description, model.IsPublic, projectID)
 	err = b.boardStorage.CreateBoard(board)
 	if err != nil {
-		return errors.NewPostgresWriteError(err, "Error creating a board in the database")
+		return app_errors.NewPostgresWriteError(err, "Error creating a board in the database")
 	}
 
 	column := columnDTO.ColumnDTO{
@@ -50,50 +50,50 @@ func (b *BoardService) CreateBoard(projectID uuid.UUID, model boardDTO.BoardDTO)
 	}
 	return nil
 }
-func (b *BoardService) DeleteBoard(boardID uuid.UUID) *errors.HttpError {
+func (b *BoardService) DeleteBoard(boardID uuid.UUID) *app_errors.HttpError {
 	isBoardExist, err := b.isBoardExist(boardID)
 	if !isBoardExist {
-		return errors.NewNotFoundError(err, "This board doesn't exist")
+		return app_errors.NewNotFoundError(err, "This board doesn't exist")
 	}
 	err1 := b.boardStorage.DeleteBoard(boardID)
 	if err1 != nil {
-		return errors.NewPostgresWriteError(err1, "Error deleting a board")
+		return app_errors.NewPostgresWriteError(err1, "Error deleting a board")
 	}
 	return nil
 }
-func (b *BoardService) GetBoard(boardID uuid.UUID) (*pm_entity.Board, *errors.HttpError) {
+func (b *BoardService) GetBoard(boardID uuid.UUID) (*pm_entity.Board, *app_errors.HttpError) {
 	isBoardExist, err := b.isBoardExist(boardID)
 	if !isBoardExist {
-		return nil, errors.NewNotFoundError(err, "This board doesn't exist")
+		return nil, app_errors.NewNotFoundError(err, "This board doesn't exist")
 	}
 	board, err1 := b.boardStorage.GetBoard(boardID)
 	if err1 != nil {
-		return nil, errors.NewPostgresReadError(err1, "Error getting a board")
+		return nil, app_errors.NewPostgresReadError(err1, "Error getting a board")
 	}
 	return board, nil
 }
-func (b *BoardService) GetAllBoards(projectID uuid.UUID) ([]*pm_entity.Board, *errors.HttpError) {
+func (b *BoardService) GetAllBoards(projectID uuid.UUID) ([]*pm_entity.Board, *app_errors.HttpError) {
 	isProjectExist, err := b.projectService.IsProjectExist(projectID)
 	if !isProjectExist {
-		return nil, errors.NewNotFoundError(err, "This project doesn't exist")
+		return nil, app_errors.NewNotFoundError(err, "This project doesn't exist")
 	}
 	projects, err1 := b.boardStorage.GetProjectBoards(projectID)
 	if err1 != nil {
-		return nil, errors.NewPostgresReadError(err1, "Error getting a boards")
+		return nil, app_errors.NewPostgresReadError(err1, "Error getting a boards")
 	}
 	return projects, nil
 }
-func (b *BoardService) UpdateBoard(boardID uuid.UUID, model boardDTO.BoardDTO) *errors.HttpError {
+func (b *BoardService) UpdateBoard(boardID uuid.UUID, model boardDTO.BoardDTO) *app_errors.HttpError {
 	board, err := b.boardStorage.GetBoard(boardID)
 	if err != nil {
-		return errors.NewNotFoundError(err, "This board doesn't exist")
+		return app_errors.NewNotFoundError(err, "This board doesn't exist")
 	}
 	board.Name = model.Name
 	board.Description = model.Description
 	board.IsPublic = model.IsPublic
 	err = b.boardStorage.UpdateBoard(board)
 	if err != nil {
-		return errors.NewPostgresWriteError(err, "Error updating a board")
+		return app_errors.NewPostgresWriteError(err, "Error updating a board")
 	}
 	return nil
 }

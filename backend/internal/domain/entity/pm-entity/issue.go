@@ -19,7 +19,7 @@ type Issue struct {
 	Owner uuid.UUID `json:"owner" gorm:"type:uuid"`
 
 	ColumnID uuid.UUID `json:"columnID" gorm:"type:uuid"`
-	Column   *Column   `json:"column"`
+	ColumnData   *ColumnData   `json:"column"`
 }
 
 func CreateNewIssueEntity(Name string, Description string, ColumnID uuid.UUID) Issue {

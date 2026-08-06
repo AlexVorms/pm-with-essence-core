@@ -2,6 +2,7 @@ package routes
 
 import (
 	"pm-with-essence/cmd/api/controllers"
+	"pm-with-essence/cmd/service/authService"
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 
@@ -17,6 +18,7 @@ type Router struct {
 	projectController controllers.ProjectController
 	boardController   controllers.BoardController
 	columnController  controllers.ColumnController
+	jwtService        authService.JwtService
 }
 
 func NewRouter(
@@ -24,13 +26,15 @@ func NewRouter(
 	taskController controllers.TaskController,
 	projectController controllers.ProjectController,
 	boardController controllers.BoardController,
-	columnController controllers.ColumnController) *Router {
+	columnController controllers.ColumnController,
+	jwtService authService.JwtService) *Router {
 	return &Router{
 		userController:    userController,
 		taskController:    taskController,
 		projectController: projectController,
 		boardController:   boardController,
-		columnController:  columnController}
+		columnController:  columnController,
+		jwtService:        jwtService}
 }
 func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	router := gin.Default()
@@ -58,7 +62,7 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 		taskController.PUT("/column/:columnId/task/:taskId", r.taskController.ChangeTaskColumn)
 		taskController.PUT("/:taskId/complete", r.taskController.FinishTask)
 	}
-	projectController := router.Group("/project")
+	projectController := router.Group("/project", r.jwtService.AuthMiddleware())
 	{
 		projectController.POST("", r.projectController.CreateProject)
 		projectController.GET("", r.projectController.GetAllProjects)
@@ -66,6 +70,7 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 		projectController.DELETE("/:projectId", r.projectController.DeleteProject)
 		projectController.PUT("/:projectId", r.projectController.UpdateProject)
 	}
+
 	boardController := router.Group("/board")
 	{
 		boardController.POST("/:projectId", r.boardController.CreateBoard)

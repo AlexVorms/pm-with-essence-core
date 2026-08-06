@@ -26,7 +26,7 @@ func NewTaskController(taskService *taskService.TaskService) *TaskController {
 // @Tags Task
 // @Description create new task
 // @Produce json
-// @Param columnId path string true "Column ID"
+// @Param columnId path string true "ColumnData ID"
 // @Param newTaskDTO body taskDTO.TaskDTO true "newTaskDTO"
 // @Success 200
 // @Router       /task/{columnId} [post]
@@ -152,7 +152,7 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 // @Tags Task
 // @Description update task
 // @Produce json
-// @Param columnId path string true "Column ID"
+// @Param columnId path string true "ColumnData ID"
 // @Param taskId path string true "Task ID"
 // @Success 200
 // @Router       /task/column/{columnId}/task/{taskId} [put]

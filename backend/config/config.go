@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Router   RouterConfig `mapstructure:"router"`
-	Database Database     `mapstructure:"db"`
+	Router    RouterConfig `mapstructure:"router"`
+	Database  Database     `mapstructure:"db"`
+	JWTSecret string       `mapstructure:"jwt_secret"`
 }
 type Database struct {
 	Host     string `mapstructure:"host"`
@@ -27,6 +28,9 @@ func SetConfig() (config Config, err error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./config")
+
+	viper.AutomaticEnv()
+	viper.BindEnv("jwt_secret", "JWT_SECRET")
 
 	if err := viper.ReadInConfig(); err != nil {
 		var configFileNotFoundError viper.ConfigFileNotFoundError

@@ -1,4 +1,4 @@
-package errors
+package app_errors
 
 import (
 	"fmt"
@@ -11,6 +11,19 @@ type HttpError struct {
 	Err     error
 }
 
+func (e *HttpError) Unwrap() error {
+	return e.Err
+}
+func (e *HttpError) Error() string {
+	return fmt.Sprintf("[%d] %v (blame: %s)", e.Code, e.Err)
+}
+
+func NewBadRequestError(message string) *HttpError {
+	return &HttpError{
+		Code:    http.StatusBadRequest,
+		Message: message,
+	}
+}
 func NewPostgresWriteError(err error, message string) *HttpError {
 	return &HttpError{
 		Err:     err,
@@ -99,11 +112,10 @@ func NewJsonMarshalError(err error) *HttpError {
 	}
 }
 
-func NewLoginError(err error) *HttpError {
+func NewLoginError() *HttpError {
 	return &HttpError{
-		Err:     err,
 		Code:    http.StatusUnauthorized,
-		Message: "failed checks email or password",
+		Message: "Invalid email or password",
 	}
 }
 
@@ -130,6 +142,10 @@ func NewCreateJWTError(err error) *HttpError {
 		Message: "failed build jwt",
 	}
 }
-func (e *HttpError) Error() string {
-	return fmt.Sprintf("[%d] %v (blame: %s)", e.Code, e.Err)
+func NewPasswordHashError(err error, message string) *HttpError {
+	return &HttpError{
+		Err:     err,
+		Code:    http.StatusInternalServerError,
+		Message: message,
+	}
 }

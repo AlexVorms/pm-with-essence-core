@@ -1,0 +1,4 @@
+{
+  "email": "string@mail.ru",
+  "password": "String!!1"
+}

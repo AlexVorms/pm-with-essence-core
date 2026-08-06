@@ -1,0 +1,30 @@
+.task {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+    cursor: pointer;
+    transition:
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+}
+.task:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+.title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.description {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}

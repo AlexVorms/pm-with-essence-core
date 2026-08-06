@@ -23,7 +23,7 @@ func NewColumnController(columnService *columnService.ColumnService) *ColumnCont
 
 // CreateColumn
 // @Summary create new column
-// @Tags Column
+// @Tags ColumnData
 // @Description create new board
 // @Produce json
 // @Param boardID path string true "boardID"
@@ -55,7 +55,7 @@ func (p *ColumnController) CreateColumn(c *gin.Context) {
 
 // UpdateColumn
 // @Summary create new column
-// @Tags Column
+// @Tags ColumnData
 // @Description create new board
 // @Produce json
 // @Param columnID path string true "columnID"
@@ -87,7 +87,7 @@ func (p *ColumnController) UpdateColumn(c *gin.Context) {
 
 // DeleteColumn
 // @Summary delete column
-// @Tags Column
+// @Tags ColumnData
 // @Description delete column
 // @Produce json
 // @Param columnID path string true "columnID"
@@ -112,7 +112,7 @@ func (p *ColumnController) DeleteColumn(c *gin.Context) {
 
 // UpdateColumnOrder
 // @Summary update column order
-// @Tags Column
+// @Tags ColumnData
 // @Description update column order
 // @Produce json
 // @Param updateColumnOrderDTO body columnDTO.UpdateColumnOrderDTO true "UpdateColumnOrderDTO"

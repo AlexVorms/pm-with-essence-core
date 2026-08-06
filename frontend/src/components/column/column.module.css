@@ -1,0 +1,23 @@
+.columnBody {
+    background-color: rgb(169, 162, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 12px;
+    flex: 0 0 300px;
+    min-height: 50px;
+}
+.column {
+    flex-direction: column;
+   background: transparent;
+    flex: 0 0 300px;
+}
+.columnTitle {
+    background-color: rgb(169, 162, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 12px;
+    flex: 0 0 300px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
