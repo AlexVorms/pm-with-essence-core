@@ -1,0 +1,537 @@
+definitions:
+  boardDTO.BoardDTO:
+    properties:
+      description:
+        type: string
+      isPublic:
+        type: boolean
+      name:
+        type: string
+    type: object
+  columnDTO.ColumnDTO:
+    properties:
+      is_final:
+        type: boolean
+      name:
+        type: string
+      order:
+        description: порядок начинается с 0
+        type: integer
+    type: object
+  columnDTO.UpdateColumnOrderDTO:
+    properties:
+      first_column_id:
+        type: string
+      first_order:
+        type: integer
+      second_column_id:
+        type: string
+      second_order:
+        type: integer
+    type: object
+  projectDTO.ProjectDTO:
+    properties:
+      description:
+        type: string
+      isPublic:
+        type: boolean
+      name:
+        type: string
+    type: object
+  responseDTO.ErrorResponse:
+    properties:
+      message:
+        example: Invalid project data
+        type: string
+    type: object
+  responseDTO.LoginResponse:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIs...
+        type: string
+      tokenType:
+        example: Bearer
+        type: string
+    type: object
+  taskDTO.TaskDTO:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  userDTO.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  userDTO.RegisterDTO:
+    properties:
+      email:
+        description: валидация
+        type: string
+      password:
+        maxLength: 72
+        minLength: 8
+        type: string
+      user_name:
+        maxLength: 32
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - user_name
+    type: object
+info:
+  contact: {}
+  description: Серверная часть прототипа системы управления проектами с ядром Essence
+  title: Project manager with Essence core
+  version: "1.0"
+paths:
+  /board/{boardId}:
+    delete:
+      description: delete board
+      parameters:
+      - description: Board ID
+        in: path
+        name: boardId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: delete board
+      tags:
+      - Board
+    get:
+      description: get board
+      parameters:
+      - description: Board ID
+        in: path
+        name: boardId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get board
+      tags:
+      - Board
+    post:
+      description: update board
+      parameters:
+      - description: Board ID
+        in: path
+        name: boardId
+        required: true
+        type: string
+      - description: BoardDTO
+        in: body
+        name: BoardDTO
+        required: true
+        schema:
+          $ref: '#/definitions/boardDTO.BoardDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: update board
+      tags:
+      - Board
+  /board/{projectId}:
+    post:
+      description: create new board
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: BoardDTO
+        in: body
+        name: BoardDTO
+        required: true
+        schema:
+          $ref: '#/definitions/boardDTO.BoardDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: create new board
+      tags:
+      - Board
+  /board/all-boards/{projectId}:
+    get:
+      description: get all boards
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get all boards
+      tags:
+      - Board
+  /column:
+    post:
+      description: update column order
+      parameters:
+      - description: UpdateColumnOrderDTO
+        in: body
+        name: updateColumnOrderDTO
+        required: true
+        schema:
+          $ref: '#/definitions/columnDTO.UpdateColumnOrderDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: update column order
+      tags:
+      - ColumnData
+  /column/{boardID}:
+    post:
+      description: create new board
+      parameters:
+      - description: boardID
+        in: path
+        name: boardID
+        required: true
+        type: string
+      - description: ColumnDTO
+        in: body
+        name: ColumnDTO
+        required: true
+        schema:
+          $ref: '#/definitions/columnDTO.ColumnDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: create new column
+      tags:
+      - ColumnData
+  /column/{columnID}:
+    delete:
+      description: delete column
+      parameters:
+      - description: columnID
+        in: path
+        name: columnID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: delete column
+      tags:
+      - ColumnData
+    put:
+      description: create new board
+      parameters:
+      - description: columnID
+        in: path
+        name: columnID
+        required: true
+        type: string
+      - description: ColumnDTO
+        in: body
+        name: ColumnDTO
+        required: true
+        schema:
+          $ref: '#/definitions/columnDTO.ColumnDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: create new column
+      tags:
+      - ColumnData
+  /login:
+    post:
+      description: user login
+      parameters:
+      - description: LoginDTO
+        in: body
+        name: loginDTO
+        required: true
+        schema:
+          $ref: '#/definitions/userDTO.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responseDTO.LoginResponse'
+      summary: login
+      tags:
+      - User
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: get string by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get user profile
+      tags:
+      - User
+  /project:
+    post:
+      description: create new project
+      parameters:
+      - description: newProjectDTO
+        in: body
+        name: newProjectDTO
+        required: true
+        schema:
+          $ref: '#/definitions/projectDTO.ProjectDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responseDTO.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responseDTO.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create new project
+      tags:
+      - Project
+  /project/{projectId}:
+    delete:
+      description: delete project
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: delete project
+      tags:
+      - Project
+    get:
+      description: update project
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get project
+      tags:
+      - Project
+    put:
+      description: update project
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: newProjectDTO
+        in: body
+        name: newProjectDTO
+        required: true
+        schema:
+          $ref: '#/definitions/projectDTO.ProjectDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: update project
+      tags:
+      - Project
+  /register:
+    post:
+      description: user register
+      parameters:
+      - description: RegisterDTO
+        in: body
+        name: registerDTO
+        required: true
+        schema:
+          $ref: '#/definitions/userDTO.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: register
+      tags:
+      - User
+  /task:
+    get:
+      description: get all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get all tasks
+      tags:
+      - Task
+  /task/{columnId}:
+    post:
+      description: create new task
+      parameters:
+      - description: ColumnData ID
+        in: path
+        name: columnId
+        required: true
+        type: string
+      - description: newTaskDTO
+        in: body
+        name: newTaskDTO
+        required: true
+        schema:
+          $ref: '#/definitions/taskDTO.TaskDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: create new task
+      tags:
+      - Task
+  /task/{taskId}:
+    delete:
+      description: delete task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: delete task
+      tags:
+      - Task
+    get:
+      description: get task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get task
+      tags:
+      - Task
+    put:
+      description: update task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: newTaskDTO
+        in: body
+        name: newTaskDTO
+        required: true
+        schema:
+          $ref: '#/definitions/taskDTO.TaskDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: update task
+      tags:
+      - Task
+  /task/{taskId}/complete:
+    put:
+      description: update task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: update task
+      tags:
+      - Task
+  /task/column/{columnId}/task/{taskId}:
+    put:
+      description: update task
+      parameters:
+      - description: ColumnData ID
+        in: path
+        name: columnId
+        required: true
+        type: string
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: update task
+      tags:
+      - Task
+securityDefinitions:
+  BearerAuth:
+    description: 'Введите JWT токен в формате: Bearer {token}'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
