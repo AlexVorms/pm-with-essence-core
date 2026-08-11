@@ -21,11 +21,14 @@ func NewTaskService(taskStorage *repository.TaskStorage,
 		columnStorage: columnStorage,
 	}
 }
-func (ts *TaskService) CreateTask(columnID uuid.UUID, model taskDTO.TaskDTO) *app_errors.HttpError {
+func (ts *TaskService) CreateTask(columnID uuid.UUID,
+	model taskDTO.TaskDTO) *app_errors.HttpError {
+
 	_, err := ts.columnStorage.GetColumn(columnID)
 	if err != nil {
 		return app_errors.NewNotFoundError(err, "This column doesn't exist")
 	}
+
 	task := pm_entity.CreateNewIssueEntity(model.Name, model.Description, columnID)
 	err = ts.taskStorage.CreateTask(task)
 	if err != nil {
@@ -38,7 +41,9 @@ func (ts *TaskService) CompleteTask(taskID uuid.UUID) *app_errors.HttpError {
 	if err != nil {
 		return app_errors.NewNotFoundError(err, "This task doesn't exist")
 	}
+
 	//TODO:Если есть проблемы, они здесь
+
 	task = pm_entity.CompleteIssueEntity(task)
 	err = ts.taskStorage.UpdateTask(task)
 	if err != nil {

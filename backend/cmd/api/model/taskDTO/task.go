@@ -21,6 +21,11 @@ type GetTaskDTO struct {
 	Description string `json:"description"`
 	IsComplete  bool   `json:"isComplete"`
 }
+type GetColumnTasksDTO struct {
+	ID         uuid.UUID `json:"id"`
+	Name       string    `json:"name"`
+	IsComplete bool      `json:"isComplete"`
+}
 
 func CreateNewGetTaskDTO(issue *pm_entity.Issue) *GetTaskDTO {
 	return &GetTaskDTO{

@@ -31,6 +31,7 @@ func SetConfig() (config Config, err error) {
 
 	viper.AutomaticEnv()
 	viper.BindEnv("jwt_secret", "JWT_SECRET")
+	viper.BindEnv("db.password", "DB_PASSWORD")
 
 	if err := viper.ReadInConfig(); err != nil {
 		var configFileNotFoundError viper.ConfigFileNotFoundError

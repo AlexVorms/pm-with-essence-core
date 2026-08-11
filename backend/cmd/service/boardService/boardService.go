@@ -62,25 +62,31 @@ func (b *BoardService) DeleteBoard(boardID uuid.UUID) *app_errors.HttpError {
 	return nil
 }
 func (b *BoardService) GetBoard(boardID uuid.UUID) (*pm_entity.Board, *app_errors.HttpError) {
+	//TODO:рефакторинг, сделать проверку на существование и получение доски одним запросом
 	isBoardExist, err := b.isBoardExist(boardID)
 	if !isBoardExist {
 		return nil, app_errors.NewNotFoundError(err, "This board doesn't exist")
 	}
+
 	board, err1 := b.boardStorage.GetBoard(boardID)
 	if err1 != nil {
 		return nil, app_errors.NewPostgresReadError(err1, "Error getting a board")
 	}
+
 	return board, nil
 }
 func (b *BoardService) GetAllBoards(projectID uuid.UUID) ([]*pm_entity.Board, *app_errors.HttpError) {
+
 	isProjectExist, err := b.projectService.IsProjectExist(projectID)
 	if !isProjectExist {
 		return nil, app_errors.NewNotFoundError(err, "This project doesn't exist")
 	}
+
 	projects, err1 := b.boardStorage.GetProjectBoards(projectID)
 	if err1 != nil {
 		return nil, app_errors.NewPostgresReadError(err1, "Error getting a boards")
 	}
+
 	return projects, nil
 }
 func (b *BoardService) UpdateBoard(boardID uuid.UUID, model boardDTO.BoardDTO) *app_errors.HttpError {

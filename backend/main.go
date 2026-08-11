@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"pm-with-essence/cmd/api/controllers"
 	"pm-with-essence/cmd/api/routes"
 	"pm-with-essence/cmd/repository"
@@ -34,7 +33,6 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println(".env file not found")
 	}
-	fmt.Println(os.Getenv("JWT_SECRET"))
 
 	cfg, err := config.SetConfig()
 	if err != nil {
@@ -43,8 +41,6 @@ func main() {
 
 	fmt.Printf("Запуск на порту: %d\n", cfg.Router.Port)
 	fmt.Printf("БД Хост: %s, Пользователь: %s\n", cfg.Database.Host, cfg.Database.Username)
-	fmt.Println(cfg.Database.Password, cfg.Database.DBName)
-	fmt.Printf(cfg.JWTSecret)
 
 	//init database
 	db, err := database.ConnectDb(cfg.Database)
