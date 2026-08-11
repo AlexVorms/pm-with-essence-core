@@ -30,9 +30,7 @@ import (
 
 func main() {
 	//set config
-	if err := godotenv.Load(); err != nil {
-		log.Println(".env file not found")
-	}
+	_ = godotenv.Load()
 
 	cfg, err := config.SetConfig()
 	if err != nil {

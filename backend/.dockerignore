@@ -1,0 +1,5 @@
+../.gitignore
+.idea
+../.env
+*.log
+test_data.txt

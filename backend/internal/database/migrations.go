@@ -23,7 +23,7 @@ func ConnectDb(cfg config.Database) (*gorm.DB, error) {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to database. \n", err)
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	db.Logger = logger.Default.LogMode(logger.Info)
@@ -46,7 +46,7 @@ func AutoMigration(db *gorm.DB) {
 		&pm_entity.User{},
 		&pm_entity.Project{},
 		&pm_entity.Board{},
-		&pm_entity.ColumnData{},
+		&pm_entity.Column{},
 		&pm_entity.Issue{})
 	if err != nil {
 		log.Fatal("Failed to migrate database. \n", err)

@@ -11,7 +11,7 @@ type Board struct {
 	ProjectID uuid.UUID `json:"projectID" gorm:"type:uuid"`
 	Project   *Project  `json:"project"`
 
-	Columns []ColumnData `json:"columns" gorm:"constraint:OnDelete:CASCADE;"`
+	Columns []Column `json:"columns" gorm:"constraint:OnDelete:CASCADE;"`
 	//Status      string    `json:"status" gorm:"not null"`
 }
 

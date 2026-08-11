@@ -2,7 +2,7 @@ package pm_entity
 
 import "github.com/google/uuid"
 
-type ColumnData struct {
+type Column struct {
 	ID      uuid.UUID `json:"id" gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
 	Name    string    `json:"name"`
 	IsFinal bool      `json:"is_final"`
@@ -13,8 +13,8 @@ type ColumnData struct {
 	Issues  []Issue   `json:"issues"`
 }
 
-func CreateColumnEntity(Name string, IsFinal bool, Order int, boardID uuid.UUID) *ColumnData {
-	return &ColumnData{
+func CreateColumnEntity(Name string, IsFinal bool, Order int, boardID uuid.UUID) *Column {
+	return &Column{
 		ID:      uuid.New(),
 		Name:    Name,
 		IsFinal: IsFinal,
