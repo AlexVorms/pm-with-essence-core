@@ -1,6 +1,7 @@
 package boardService
 
 import (
+	"fmt"
 	"pm-with-essence/cmd/api/model/boardDTO"
 	"pm-with-essence/cmd/api/model/columnDTO"
 	"pm-with-essence/cmd/repository"
@@ -8,6 +9,7 @@ import (
 	"pm-with-essence/cmd/service/projectService"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
+	"pm-with-essence/internal/mapper"
 
 	"github.com/google/uuid"
 )
@@ -61,19 +63,15 @@ func (b *BoardService) DeleteBoard(boardID uuid.UUID) *app_errors.HttpError {
 	}
 	return nil
 }
-func (b *BoardService) GetBoard(boardID uuid.UUID) (*pm_entity.Board, *app_errors.HttpError) {
-	//TODO:рефакторинг, сделать проверку на существование и получение доски одним запросом
-	isBoardExist, err := b.isBoardExist(boardID)
-	if !isBoardExist {
+func (b *BoardService) GetBoard(boardID uuid.UUID) (*boardDTO.GetBoardDTO, *app_errors.HttpError) {
+
+	board, err := b.boardStorage.GetBoard(boardID)
+	if err != nil {
 		return nil, app_errors.NewNotFoundError(err, "This board doesn't exist")
 	}
+	fmt.Println(board)
 
-	board, err1 := b.boardStorage.GetBoard(boardID)
-	if err1 != nil {
-		return nil, app_errors.NewPostgresReadError(err1, "Error getting a board")
-	}
-
-	return board, nil
+	return mapper.ToBoardResponse(board), nil
 }
 func (b *BoardService) GetAllBoards(projectID uuid.UUID) ([]*pm_entity.Board, *app_errors.HttpError) {
 

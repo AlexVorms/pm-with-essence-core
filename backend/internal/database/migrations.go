@@ -33,14 +33,7 @@ func ConnectDb(cfg config.Database) (*gorm.DB, error) {
 
 	return db, nil
 }
-func IsDatabaseExist(db *gorm.DB, dbName string) error {
-	err := db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName)).Error
-	if err != nil {
-		log.Fatal("Failed to create database. \n", err)
-		return err
-	}
-	return nil
-}
+
 func AutoMigration(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&pm_entity.User{},
@@ -50,5 +43,9 @@ func AutoMigration(db *gorm.DB) {
 		&pm_entity.Issue{})
 	if err != nil {
 		log.Fatal("Failed to migrate database. \n", err)
+	}
+
+	if err1 := Seed(db); err1 != nil {
+		log.Println(err1)
 	}
 }

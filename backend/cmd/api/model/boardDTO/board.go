@@ -16,6 +16,7 @@ type GetBoardDTO struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	IsPublic    bool      `json:"isPublic"`
+	ProjectID   uuid.UUID `json:"projectId"`
 
 	Columns []columnDTO.GetColumnDTO `json:"columns"`
 }
