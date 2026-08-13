@@ -1,5 +1,5 @@
 import styles from './board.module.css'
-import type {ColumnType} from "../../types/ColumnData.tsx";
+import type {ColumnType} from "../../types/ColumnType.tsx";
 import {Column} from "../column/Column.tsx";
 import type {BoardType} from "../../types/BoardType.ts";
 import { CirclePlus } from 'lucide-react';

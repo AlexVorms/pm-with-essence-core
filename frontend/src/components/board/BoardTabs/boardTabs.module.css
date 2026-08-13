@@ -1,0 +1,20 @@
+
+.tabs {
+    display: flex;
+    gap: 4px;
+
+    overflow-x: auto;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    padding: 10px 16px;
+
+    border: none;
+    background: transparent;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}

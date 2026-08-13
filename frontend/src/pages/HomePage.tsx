@@ -1,65 +1,65 @@
 import { LayoutDashboard, Users, Settings, Plus } from 'lucide-react';
-import { Board } from "../components/board/Board";
-import type {BoardType} from "../types/BoardType.ts";
 
-const board: BoardType = {
-    id: "1",
-    name: "Backed Project",
-}
-const columns = [
-    {
-        id: "1",
-        name: "To Do",
-        isFinal: false,
-        order: 1,
-        tasks:[
-        {
-            id: "1",
-            name: "Task1",
-            description: "Task 1 is over",
-        },
-        {
-            id: "2",
-            name: "Task2",
-        },
+import {BoardPage} from "./BoardPage.tsx";
 
-        ],
-    },
-    {
-        id: "2",
-        name: "In Progress",
-        isFinal: false,
-        order: 2,
-        tasks:[
-            {
-                id: "1",
-                name: "Task1",
-            },
-
-        ],
-    },
-    {
-        id: "3",
-        name: "Done",
-        isFinal: true,
-        order: 3,
-        tasks:[],
-    },
-    {
-        id: "4",
-        name: "Done",
-        isFinal: true,
-        order: 4,
-        tasks:[],
-    },
-    {
-        id: "5",
-        name: "Done",
-        isFinal: true,
-        order: 4,
-        tasks:[],
-    },
-];
+// const board: BoardType = {
+//     id: "1",
+//     name: "Backed Project",
+// }
+// const columns = [
+//     {
+//         id: "1",
+//         name: "To Do",
+//         isFinal: false,
+//         order: 1,
+//         tasks:[
+//         {
+//             id: "1",
+//             name: "Task1",
+//             description: "Task 1 is over",
+//         },
+//         {
+//             id: "2",
+//             name: "Task2",
+//         },
+//
+//         ],
+//     },
+//     {
+//         id: "2",
+//         name: "In Progress",
+//         isFinal: false,
+//         order: 2,
+//         tasks:[
+//             {
+//                 id: "1",
+//                 name: "Task1",
+//             },
+//
+//         ],
+//     },
+//     {
+//         id: "3",
+//         name: "Done",
+//         isFinal: true,
+//         order: 3,
+//         tasks:[],
+//     },
+//     {
+//         id: "4",
+//         name: "Done",
+//         isFinal: true,
+//         order: 4,
+//         tasks:[],
+//     },
+//     {
+//         id: "5",
+//         name: "Done",
+//         isFinal: true,
+//         order: 4,
+//         tasks:[],
+//     },
+// ];
 export const HomePage = () => {
     return (
         <div className="flex h-screen bg-white text-gray-700 border-r border-gray-200">
@@ -79,7 +79,7 @@ export const HomePage = () => {
             {/* Область контента (здесь будет ваша доска) */}
             <main className="flex-1 overflow-x-auto bg-[#f1f2f4]">
                 <div className="p-4">
-                    <Board columns = {columns} board = {board}></Board>
+                    <BoardPage boardId={"aaaaaaaa-1111-1111-1111-aaaaaaaaaaaa"} projectId={"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}></BoardPage>
                 </div>
             </main>
         </div>
