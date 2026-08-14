@@ -2,64 +2,6 @@ import { LayoutDashboard, Users, Settings, Plus } from 'lucide-react';
 
 import {BoardPage} from "./BoardPage.tsx";
 
-// const board: BoardType = {
-//     id: "1",
-//     name: "Backed Project",
-// }
-// const columns = [
-//     {
-//         id: "1",
-//         name: "To Do",
-//         isFinal: false,
-//         order: 1,
-//         tasks:[
-//         {
-//             id: "1",
-//             name: "Task1",
-//             description: "Task 1 is over",
-//         },
-//         {
-//             id: "2",
-//             name: "Task2",
-//         },
-//
-//         ],
-//     },
-//     {
-//         id: "2",
-//         name: "In Progress",
-//         isFinal: false,
-//         order: 2,
-//         tasks:[
-//             {
-//                 id: "1",
-//                 name: "Task1",
-//             },
-//
-//         ],
-//     },
-//     {
-//         id: "3",
-//         name: "Done",
-//         isFinal: true,
-//         order: 3,
-//         tasks:[],
-//     },
-//     {
-//         id: "4",
-//         name: "Done",
-//         isFinal: true,
-//         order: 4,
-//         tasks:[],
-//     },
-//     {
-//         id: "5",
-//         name: "Done",
-//         isFinal: true,
-//         order: 4,
-//         tasks:[],
-//     },
-// ];
 export const HomePage = () => {
     return (
         <div className="flex h-screen bg-white text-gray-700 border-r border-gray-200">

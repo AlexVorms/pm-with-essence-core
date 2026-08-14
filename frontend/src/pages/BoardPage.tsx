@@ -3,6 +3,7 @@ import { useBoards } from "../hooks/useBoards";
 import {Board} from "../components/board/Board.tsx";
 import {BoardTabs} from "../components/board/BoardTabs/BoardTabs.tsx";
 
+
 interface BoardPageProps {
     boardId: string;
     projectId: string;
@@ -35,6 +36,8 @@ export const BoardPage = ({ boardId, projectId }: BoardPageProps) => {
                 {boards && (
                     <BoardTabs
                         boards={boards.boards}
+                        activeBoardId={boardId}
+                        projectId={projectId}
                     />
                 )}
                 <h1>{board.name}</h1>
