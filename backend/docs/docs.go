@@ -241,12 +241,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "ColumnUpdateDTO",
-                        "name": "ColumnUpdateDTO",
+                        "description": "ColumnDTO",
+                        "name": "ColumnDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/columnDTO.ColumnUpdateDTO"
+                            "$ref": "#/definitions/columnDTO.ColumnDTO"
                         }
                     }
                 ],
@@ -701,19 +701,15 @@ const docTemplate = `{
         "columnDTO.ColumnDTO": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "columnDTO.ColumnUpdateDTO": {
-            "type": "object",
-            "properties": {
                 "is_final": {
                     "type": "boolean"
                 },
                 "name": {
                     "type": "string"
+                },
+                "order": {
+                    "description": "порядок начинается с 0",
+                    "type": "integer"
                 }
             }
         },

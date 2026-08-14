@@ -59,7 +59,7 @@ func (p *ColumnController) CreateColumn(c *gin.Context) {
 // @Description create new board
 // @Produce json
 // @Param columnID path string true "columnID"
-// @Param ColumnUpdateDTO body columnDTO.ColumnUpdateDTO true "ColumnUpdateDTO"
+// @Param ColumnDTO body columnDTO.ColumnDTO true "ColumnDTO"
 // @Success 200
 // @Router       /column/{columnID} [put]
 func (p *ColumnController) UpdateColumn(c *gin.Context) {
@@ -70,13 +70,13 @@ func (p *ColumnController) UpdateColumn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return
 	}
-	var ColumnUpdateDTO columnDTO.ColumnUpdateDTO
-	if err := c.ShouldBindJSON(&ColumnUpdateDTO); err != nil {
+	var ColumnDTO columnDTO.ColumnDTO
+	if err := c.ShouldBindJSON(&ColumnDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := p.columnService.UpdateColumn(parsedUUID, ColumnUpdateDTO)
+	err := p.columnService.UpdateColumn(parsedUUID, ColumnDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
 		c.JSON(err.Code, err)

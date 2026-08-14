@@ -1,14 +1,12 @@
 package taskService
 
 import (
-	"errors"
 	"pm-with-essence/cmd/api/model/taskDTO"
 	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type TaskService struct {
@@ -28,12 +26,6 @@ func (ts *TaskService) CreateTask(columnID uuid.UUID,
 
 	_, err := ts.columnStorage.GetColumn(columnID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return app_errors.NewPostgresReadError(
-				err,
-				"Failed to read task from database",
-			)
-		}
 		return app_errors.NewNotFoundError(err, "This column doesn't exist")
 	}
 
@@ -47,12 +39,6 @@ func (ts *TaskService) CreateTask(columnID uuid.UUID,
 func (ts *TaskService) CompleteTask(taskID uuid.UUID) *app_errors.HttpError {
 	task, err := ts.taskStorage.GetTask(taskID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return app_errors.NewPostgresReadError(
-				err,
-				"Failed to read task from database",
-			)
-		}
 		return app_errors.NewNotFoundError(err, "This task doesn't exist")
 	}
 
@@ -68,17 +54,9 @@ func (ts *TaskService) CompleteTask(taskID uuid.UUID) *app_errors.HttpError {
 func (ts *TaskService) UpdateTask(taskID uuid.UUID, model taskDTO.TaskDTO) *app_errors.HttpError {
 	task, err := ts.taskStorage.GetTask(taskID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return app_errors.NewPostgresReadError(
-				err,
-				"Failed to read task from database",
-			)
-		}
 		return app_errors.NewNotFoundError(err, "This task doesn't exist")
 	}
-
 	issue := pm_entity.UpdateIssueEntity(task, model.Name, model.Description)
-
 	err = ts.taskStorage.UpdateTask(issue)
 	if err != nil {
 		return app_errors.NewPostgresWriteError(err, "Error while updating task")
@@ -88,15 +66,8 @@ func (ts *TaskService) UpdateTask(taskID uuid.UUID, model taskDTO.TaskDTO) *app_
 func (ts *TaskService) DeleteTask(taskID uuid.UUID) *app_errors.HttpError {
 	_, err := ts.taskStorage.GetTask(taskID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return app_errors.NewPostgresReadError(
-				err,
-				"Failed to read task from database",
-			)
-		}
 		return app_errors.NewNotFoundError(err, "This task doesn't exist")
 	}
-
 	err = ts.taskStorage.DeleteTask(taskID)
 	if err != nil {
 		return app_errors.NewPostgresWriteError(err, "Error while deleting task")
@@ -106,12 +77,6 @@ func (ts *TaskService) DeleteTask(taskID uuid.UUID) *app_errors.HttpError {
 func (ts *TaskService) GetTask(taskID uuid.UUID) (*taskDTO.GetTaskDTO, *app_errors.HttpError) {
 	task, err := ts.taskStorage.GetTask(taskID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, app_errors.NewPostgresReadError(
-				err,
-				"Failed to read task from database",
-			)
-		}
 		return nil, app_errors.NewNotFoundError(err, "This task doesn't exist")
 	}
 	newTaskDTO := taskDTO.CreateNewGetTaskDTO(task)
@@ -120,22 +85,10 @@ func (ts *TaskService) GetTask(taskID uuid.UUID) (*taskDTO.GetTaskDTO, *app_erro
 func (ts *TaskService) ChangeTaskColumn(taskID uuid.UUID, columnID uuid.UUID) *app_errors.HttpError {
 	task, err := ts.taskStorage.GetTask(taskID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return app_errors.NewPostgresReadError(
-				err,
-				"Failed to read task from database",
-			)
-		}
 		return app_errors.NewNotFoundError(err, "This task doesn't exist")
 	}
 	_, err = ts.columnStorage.GetColumn(columnID)
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return app_errors.NewPostgresReadError(
-				err,
-				"Failed to read column from database",
-			)
-		}
 		return app_errors.NewNotFoundError(err, "This column doesn't exist")
 	}
 	task.ColumnID = columnID

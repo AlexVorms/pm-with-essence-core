@@ -10,15 +10,13 @@ definitions:
     type: object
   columnDTO.ColumnDTO:
     properties:
-      name:
-        type: string
-    type: object
-  columnDTO.ColumnUpdateDTO:
-    properties:
       is_final:
         type: boolean
       name:
         type: string
+      order:
+        description: порядок начинается с 0
+        type: integer
     type: object
   columnDTO.UpdateColumnOrderDTO:
     properties:
@@ -254,12 +252,12 @@ paths:
         name: columnID
         required: true
         type: string
-      - description: ColumnUpdateDTO
+      - description: ColumnDTO
         in: body
-        name: ColumnUpdateDTO
+        name: ColumnDTO
         required: true
         schema:
-          $ref: '#/definitions/columnDTO.ColumnUpdateDTO'
+          $ref: '#/definitions/columnDTO.ColumnDTO'
       produces:
       - application/json
       responses:

@@ -158,7 +158,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ColumnData"
+                    "Column"
                 ],
                 "summary": "update column order",
                 "parameters": [
@@ -186,7 +186,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ColumnData"
+                    "Column"
                 ],
                 "summary": "create new column",
                 "parameters": [
@@ -221,7 +221,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ColumnData"
+                    "Column"
                 ],
                 "summary": "create new column",
                 "parameters": [
@@ -233,12 +233,12 @@
                         "required": true
                     },
                     {
-                        "description": "ColumnUpdateDTO",
-                        "name": "ColumnUpdateDTO",
+                        "description": "ColumnDTO",
+                        "name": "ColumnDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/columnDTO.ColumnUpdateDTO"
+                            "$ref": "#/definitions/columnDTO.ColumnDTO"
                         }
                     }
                 ],
@@ -254,7 +254,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ColumnData"
+                    "Column"
                 ],
                 "summary": "delete column",
                 "parameters": [
@@ -510,7 +510,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ColumnData ID",
+                        "description": "Column ID",
                         "name": "columnId",
                         "in": "path",
                         "required": true
@@ -543,7 +543,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ColumnData ID",
+                        "description": "Column ID",
                         "name": "columnId",
                         "in": "path",
                         "required": true
@@ -693,19 +693,15 @@
         "columnDTO.ColumnDTO": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "columnDTO.ColumnUpdateDTO": {
-            "type": "object",
-            "properties": {
                 "is_final": {
                     "type": "boolean"
                 },
                 "name": {
                     "type": "string"
+                },
+                "order": {
+                    "description": "порядок начинается с 0",
+                    "type": "integer"
                 }
             }
         },
