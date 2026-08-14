@@ -1,7 +1,7 @@
 router:
   port: ":8080"
 db:
-  host: "localhost"
+  host: "postgres"
   username: "postgres"
   port: "5432"
   dbname: "pm-with-Essence-Db"
