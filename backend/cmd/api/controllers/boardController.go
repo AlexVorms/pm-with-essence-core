@@ -100,7 +100,7 @@ func (b *BoardController) GetBoard(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"board": board})
+	c.JSON(http.StatusOK, board)
 }
 
 // GetBoards
@@ -125,7 +125,7 @@ func (b *BoardController) GetBoards(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"boards": boards})
+	c.JSON(http.StatusOK, boards)
 }
 
 // UpdateBoard

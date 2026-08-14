@@ -138,5 +138,5 @@ func (ps *ProjectController) GetProject(c *gin.Context) {
 		c.JSON(err1.Code, err1)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"project": project})
+	c.JSON(http.StatusOK, project)
 }

@@ -18,11 +18,18 @@ func NewBoardStorage(db *gorm.DB) *BoardStorage {
 }
 func (b *BoardStorage) GetBoard(boardID uuid.UUID) (*pm_entity.Board, error) {
 	var board *pm_entity.Board
-	err := b.db.Model(pm_entity.Board{}).Preload("Columns").Preload("Columns.Issues").Find(&board, boardID).Error
+
+	err := b.db.
+		Model(pm_entity.Board{}).
+		Preload("Columns").
+		Preload("Columns.Issues").
+		Find(&board, boardID).
+		Error
 	if err != nil {
 		return nil, err
 	}
 	return board, nil
+
 }
 func (b *BoardStorage) GetProjectBoards(projectID uuid.UUID) ([]*pm_entity.Board, error) {
 	var boards []*pm_entity.Board

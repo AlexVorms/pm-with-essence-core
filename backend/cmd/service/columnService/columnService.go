@@ -1,12 +1,15 @@
 package columnService
 
 import (
+	"errors"
+	"fmt"
 	"pm-with-essence/cmd/api/model/columnDTO"
 	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ColumnService struct {
@@ -20,60 +23,114 @@ func NewColumnService(columnStorage *repository.ColumnStorage, storage *reposito
 		boardStorage:  storage,
 	}
 }
-func (p *ColumnService) CreateColumn(boardID uuid.UUID, model columnDTO.ColumnDTO) *app_errors.HttpError {
-	_, err := p.boardStorage.GetBoard(boardID)
+func (c *ColumnService) CreateColumn(boardID uuid.UUID, model columnDTO.ColumnDTO) *app_errors.HttpError {
+	board, err := c.boardStorage.GetBoard(boardID)
 	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return app_errors.NewPostgresReadError(
+				err,
+				"Failed to read board from database",
+			)
+		}
 		return app_errors.NewNotFoundError(err, "This board doesn't exist")
 	}
 
-	newColumn := pm_entity.CreateColumnEntity(model.Name, model.IsFinal, model.Order, boardID)
-	err1 := p.columnStorage.Create(newColumn)
+	newColumn := pm_entity.CreateColumnEntity(model.Name, false, c.getNextColumnOrder(board), boardID)
+	fmt.Println(newColumn)
+	err1 := c.columnStorage.Create(newColumn)
 	if err1 != nil {
 		return app_errors.NewPostgresWriteError(err1, "Error while creating column")
 	}
+
 	return nil
 }
-func (c *ColumnService) DeleteColumn(columnID uuid.UUID) *app_errors.HttpError {
-	_, err := c.columnStorage.GetColumn(columnID)
+func (p *ColumnService) getNextColumnOrder(board *pm_entity.Board) int {
+	if len(board.Columns) == 0 {
+		return 0
+	}
+
+	maxOrder := board.Columns[0].Order
+
+	for _, column := range board.Columns[1:] {
+		if column.Order > maxOrder {
+			maxOrder = column.Order
+		}
+	}
+	return maxOrder + 1
+}
+func (p *ColumnService) DeleteColumn(columnID uuid.UUID) *app_errors.HttpError {
+
+	_, err := p.columnStorage.GetColumn(columnID)
 	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return app_errors.NewPostgresReadError(
+				err,
+				"Failed to read column from database",
+			)
+		}
 		return app_errors.NewNotFoundError(err, "This column doesn't exist")
 	}
-	err = c.columnStorage.DeleteColumn(columnID)
+
+	err = p.columnStorage.DeleteColumn(columnID)
 	if err != nil {
 		return app_errors.NewPostgresWriteError(err, "Error while deleting column")
 	}
 	return nil
 }
-func (c *ColumnService) UpdateColumn(columnID uuid.UUID, model columnDTO.ColumnDTO) *app_errors.HttpError {
-	column, err := c.columnStorage.GetColumn(columnID)
+func (p *ColumnService) UpdateColumn(columnID uuid.UUID, model columnDTO.ColumnUpdateDTO) *app_errors.HttpError {
+	column, err := p.columnStorage.GetColumn(columnID)
 	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return app_errors.NewPostgresReadError(
+				err,
+				"Failed to read column from database",
+			)
+		}
 		return app_errors.NewNotFoundError(err, "This column doesn't exist")
 	}
+
 	column.IsFinal = model.IsFinal
 	column.Name = model.Name
-	err = c.columnStorage.UpdateColumn(column)
+
+	err = p.columnStorage.UpdateColumn(column)
 	if err != nil {
 		return app_errors.NewPostgresWriteError(err, "Error while updating column")
 	}
+
 	return nil
 }
-func (c *ColumnService) ChangeColumnOrder(model columnDTO.UpdateColumnOrderDTO) *app_errors.HttpError {
-	firstColumn, err := c.columnStorage.GetColumn(model.FirstColumnID)
+func (p *ColumnService) ChangeColumnOrder(model columnDTO.UpdateColumnOrderDTO) *app_errors.HttpError {
+	firstColumn, err := p.columnStorage.GetColumn(model.FirstColumnID)
 	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return app_errors.NewPostgresReadError(
+				err,
+				"Failed to read column from database",
+			)
+		}
 		return app_errors.NewNotFoundError(err, "First column doesn't exist")
 	}
-	secondColumn, err1 := c.columnStorage.GetColumn(model.SecondColumnID)
+
+	secondColumn, err1 := p.columnStorage.GetColumn(model.SecondColumnID)
 	if err1 != nil {
+		if !errors.Is(err1, gorm.ErrRecordNotFound) {
+			return app_errors.NewPostgresReadError(
+				err1,
+				"Failed to read column from database",
+			)
+		}
 		return app_errors.NewNotFoundError(err1, "Second column doesn't exist")
 	}
+
 	firstColumn.Order = model.FirstOrder
 	secondColumn.Order = model.SecondOrder
 
-	err = c.columnStorage.UpdateColumn(firstColumn)
+	err = p.columnStorage.UpdateColumn(firstColumn)
 	if err != nil {
 		return app_errors.NewPostgresWriteError(err, "Error while updating column")
 	}
-	err = c.columnStorage.UpdateColumn(secondColumn)
+
+	err = p.columnStorage.UpdateColumn(secondColumn)
 	if err != nil {
 		return app_errors.NewPostgresWriteError(err, "Error while updating column")
 	}
