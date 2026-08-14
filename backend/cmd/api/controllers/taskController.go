@@ -101,7 +101,7 @@ func (tc *TaskController) GetTask(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"task": task})
+	c.JSON(http.StatusOK, task)
 }
 
 // GetAllTasks
