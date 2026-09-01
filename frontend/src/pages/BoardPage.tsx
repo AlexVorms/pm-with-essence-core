@@ -35,14 +35,13 @@ export const BoardPage = ({ boardId, projectId }: BoardPageProps) => {
             <div>
                 {boards && (
                     <BoardTabs
-                        boards={boards.boards}
+                        boards={boards}
                         activeBoardId={boardId}
                         projectId={projectId}
                     />
                 )}
-                <h1>{board.name}</h1>
 
-                <Board columns = {board.board.columns} board = {board.board}></Board>
+                <Board columns = {board.columns} board = {board}></Board>
             </div>
 
 

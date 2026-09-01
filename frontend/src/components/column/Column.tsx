@@ -1,11 +1,13 @@
 import styles from "./column.module.css"
-import type {ColumnType} from "../../types/ColumnData.tsx";
+import type {ColumnType} from "../../types/ColumnType.tsx";
 import { Task } from "../task/Task.tsx";
-
+import {useState} from "react";
+import {AddTaskModal} from "../task/AddTaskModal/AddTaskModal.tsx";
 interface ColumnProps {
     column: ColumnType
 }
 export const Column = ({column}: ColumnProps) => {
+   const  [isAddingTask, setIsAddingTask] = useState(false);
     return(
     <div className={styles.column}>
         <div className={styles.columnTitle}>
@@ -19,8 +21,14 @@ export const Column = ({column}: ColumnProps) => {
                     task={task}
                 />
             ))}
-            <div>+ Добавить задачу</div>
+                <button onClick={() => setIsAddingTask(true)}
+                    className={styles.addTaskButton}>
+                    + Добавить задачу
+                </button>
         </div>
+        {isAddingTask && (<AddTaskModal
+            onClose={() =>  setIsAddingTask(false)}
+            onSubmit={() => {}}/>)}
     </div>
     );
 };

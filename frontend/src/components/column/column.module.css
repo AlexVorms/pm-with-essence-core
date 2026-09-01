@@ -21,3 +21,9 @@
     font-weight: bold;
     margin-bottom: 16px;
 }
+.addTaskButton{
+    cursor: pointer;
+}
+.addTaskButton:hover {
+    font-weight: bold;
+}

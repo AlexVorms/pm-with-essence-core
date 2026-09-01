@@ -1,0 +1,14 @@
+.AddColumnButton {
+    background-color: rgb(169, 162, 255, 0.2);
+    border-radius: 8px;
+    flex: 0 0 300px;
+   padding: 12px;
+}
+.AddButton{
+    flex-direction: column;
+    padding: 8px;
+    background-color: rgb(169, 162, 255, 0.2);
+}
+.CancelButton{
+    flex-direction: column;
+}
