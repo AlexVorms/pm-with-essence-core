@@ -3,7 +3,6 @@ package taskService
 import (
 	"errors"
 	"pm-with-essence/cmd/api/model/taskDTO"
-	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
@@ -12,12 +11,21 @@ import (
 )
 
 type TaskService struct {
-	taskStorage   *repository.TaskStorage
-	columnStorage *repository.ColumnStorage
+	taskStorage   TaskStorage
+	columnStorage ColumnStorage
+}
+type TaskStorage interface {
+	CreateTask(task pm_entity.Issue) error
+	GetTask(taskID uuid.UUID) (*pm_entity.Issue, error)
+	UpdateTask(task *pm_entity.Issue) error
+	DeleteTask(taskID uuid.UUID) error
+}
+type ColumnStorage interface {
+	GetColumn(columnID uuid.UUID) (*pm_entity.Column, error)
 }
 
-func NewTaskService(taskStorage *repository.TaskStorage,
-	columnStorage *repository.ColumnStorage) *TaskService {
+func NewTaskService(taskStorage TaskStorage,
+	columnStorage ColumnStorage) *TaskService {
 	return &TaskService{
 		taskStorage:   taskStorage,
 		columnStorage: columnStorage,

@@ -3,7 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-	"pm-with-essence/cmd/api/controllers"
+	"pm-with-essence/cmd/api/controllers/authController"
+	"pm-with-essence/cmd/api/controllers/boardController"
+	"pm-with-essence/cmd/api/controllers/columnController"
+	"pm-with-essence/cmd/api/controllers/projectController"
+	"pm-with-essence/cmd/api/controllers/taskController"
+	"pm-with-essence/cmd/api/controllers/userController"
 	"pm-with-essence/cmd/api/routes"
 	"pm-with-essence/cmd/repository"
 	"pm-with-essence/cmd/service/authService"
@@ -11,7 +16,7 @@ import (
 	"pm-with-essence/cmd/service/columnService"
 	"pm-with-essence/cmd/service/projectService"
 	"pm-with-essence/cmd/service/taskService"
-	userService "pm-with-essence/cmd/service/userService"
+	"pm-with-essence/cmd/service/userService"
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
 	"pm-with-essence/internal/database"
@@ -37,7 +42,7 @@ func main() {
 		log.Fatal("Не удалось загрузить конфиг:", err)
 	}
 
-	fmt.Printf("Запуск на порту: %d\n", cfg.Router.Port)
+	fmt.Printf("Запуск на порту: %s\n", cfg.Router.Port)
 	fmt.Printf("БД Хост: %s, Пользователь: %s\n", cfg.Database.Host, cfg.Database.Username)
 
 	//init database
@@ -64,20 +69,23 @@ func main() {
 	newBoardService := boardService.NewBoardService(boardStorage, newColumnService, newProjectService)
 
 	//init controllers
-	newProjectController := controllers.NewProjectController(newProjectService)
-	userController := controllers.NewUserController(newUserService, newAuthService)
-	taskController := controllers.NewTaskController(newTaskService)
-	boardController := controllers.NewBoardController(newBoardService)
-	columnController := controllers.NewColumnController(newColumnService)
+	newProjectController := projectController.NewProjectController(newProjectService)
+	newUserController := userController.NewUserController(newUserService)
+	newAuthController := authController.NewAuthController(newAuthService)
+	newTaskController := taskController.NewTaskController(newTaskService)
+	newBoardController := boardController.NewBoardController(newBoardService)
+	newColumnController := columnController.NewColumnController(newColumnService)
 
 	//init routes
 	handler := routes.NewRouter(
-		*userController,
-		*taskController,
+		*newUserController,
+		*newTaskController,
 		*newProjectController,
-		*boardController,
-		*columnController,
-		*newJWTService)
+		*newBoardController,
+		*newColumnController,
+		*newAuthController,
+		*newJWTService,
+	)
 	fmt.Printf("Swagger running on http://localhost:8080/swagger/index.html")
 	_, err = handler.InitRoutes(cfg.Router)
 	if err != nil {

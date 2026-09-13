@@ -1,21 +1,30 @@
-package controllers
+package boardController
 
 import (
 	"fmt"
 	"log"
 	"net/http"
 	"pm-with-essence/cmd/api/model/boardDTO"
-	"pm-with-essence/cmd/service/boardService"
+	"pm-with-essence/cmd/api/model/responseDTO"
+	"pm-with-essence/internal/api/app_errors"
+	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type BoardController struct {
-	boardService *boardService.BoardService
+	boardService BoardService
+}
+type BoardService interface {
+	CreateBoard(projectID uuid.UUID, model boardDTO.BoardDTO) *app_errors.HttpError
+	DeleteBoard(boardID uuid.UUID) *app_errors.HttpError
+	GetBoard(boardID uuid.UUID) (*boardDTO.GetBoardDTO, *app_errors.HttpError)
+	GetAllBoards(projectID uuid.UUID) ([]*pm_entity.Board, *app_errors.HttpError)
+	UpdateBoard(boardID uuid.UUID, model boardDTO.BoardDTO) *app_errors.HttpError
 }
 
-func NewBoardController(boardService *boardService.BoardService) *BoardController {
+func NewBoardController(boardService BoardService) *BoardController {
 	return &BoardController{
 		boardService: boardService,
 	}
@@ -50,7 +59,9 @@ func (b *BoardController) CreateBoard(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // DeleteBoard
@@ -75,7 +86,9 @@ func (b *BoardController) DeleteBoard(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // GetBoard
@@ -157,5 +170,7 @@ func (b *BoardController) UpdateBoard(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }

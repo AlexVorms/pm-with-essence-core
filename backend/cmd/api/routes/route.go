@@ -1,7 +1,12 @@
 package routes
 
 import (
-	"pm-with-essence/cmd/api/controllers"
+	"pm-with-essence/cmd/api/controllers/authController"
+	"pm-with-essence/cmd/api/controllers/boardController"
+	"pm-with-essence/cmd/api/controllers/columnController"
+	"pm-with-essence/cmd/api/controllers/projectController"
+	"pm-with-essence/cmd/api/controllers/taskController"
+	"pm-with-essence/cmd/api/controllers/userController"
 	"pm-with-essence/cmd/service/authService"
 	"pm-with-essence/config"
 	_ "pm-with-essence/docs"
@@ -13,20 +18,22 @@ import (
 )
 
 type Router struct {
-	userController    controllers.UserController
-	taskController    controllers.TaskController
-	projectController controllers.ProjectController
-	boardController   controllers.BoardController
-	columnController  controllers.ColumnController
+	userController    userController.UserController
+	taskController    taskController.TaskController
+	projectController projectController.ProjectController
+	boardController   boardController.BoardController
+	columnController  columnController.ColumnController
+	authController    authController.AuthController
 	jwtService        authService.JwtService
 }
 
 func NewRouter(
-	userController controllers.UserController,
-	taskController controllers.TaskController,
-	projectController controllers.ProjectController,
-	boardController controllers.BoardController,
-	columnController controllers.ColumnController,
+	userController userController.UserController,
+	taskController taskController.TaskController,
+	projectController projectController.ProjectController,
+	boardController boardController.BoardController,
+	columnController columnController.ColumnController,
+	authController authController.AuthController,
 	jwtService authService.JwtService) *Router {
 	return &Router{
 		userController:    userController,
@@ -34,6 +41,7 @@ func NewRouter(
 		projectController: projectController,
 		boardController:   boardController,
 		columnController:  columnController,
+		authController:    authController,
 		jwtService:        jwtService}
 }
 func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
@@ -49,8 +57,12 @@ func (r *Router) InitRoutes(cfg config.RouterConfig) (*gin.Engine, error) {
 	userController := router.Group("/")
 	{
 		userController.POST("register", r.userController.Register)
-		userController.POST("login", r.userController.Login)
 		userController.GET("profile", r.userController.Profile)
+	}
+	authController := router.Group("/")
+	{
+		authController.POST("login", r.authController.Login)
+
 	}
 	taskController := router.Group("/task")
 	{

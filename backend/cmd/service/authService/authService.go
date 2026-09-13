@@ -4,19 +4,25 @@ import (
 	"errors"
 	"pm-with-essence/cmd/api/model/responseDTO"
 	"pm-with-essence/cmd/api/model/userDTO"
-	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
+	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type AuthService struct {
-	storage    *repository.UserStorage
-	jwtService *JwtService
+	storage    UserStorage
+	jwtService JWTService
+}
+type JWTService interface {
+	GenerateToken(userID string) (string, error)
+}
+type UserStorage interface {
+	FindUser(email string) (*pm_entity.User, error)
 }
 
-func NewAuthService(storage *repository.UserStorage, jwtService *JwtService) *AuthService {
+func NewAuthService(storage UserStorage, jwtService JWTService) *AuthService {
 	return &AuthService{
 		storage:    storage,
 		jwtService: jwtService,

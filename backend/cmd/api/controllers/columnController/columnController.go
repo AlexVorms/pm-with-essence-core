@@ -1,21 +1,28 @@
-package controllers
+package columnController
 
 import (
 	"fmt"
 	"log"
 	"net/http"
 	"pm-with-essence/cmd/api/model/columnDTO"
-	"pm-with-essence/cmd/service/columnService"
+	"pm-with-essence/cmd/api/model/responseDTO"
+	"pm-with-essence/internal/api/app_errors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type ColumnController struct {
-	columnService *columnService.ColumnService
+	columnService ColumnService
+}
+type ColumnService interface {
+	CreateColumn(boardID uuid.UUID, model columnDTO.ColumnDTO) *app_errors.HttpError
+	DeleteColumn(columnID uuid.UUID) *app_errors.HttpError
+	UpdateColumn(columnID uuid.UUID, model columnDTO.ColumnUpdateDTO) *app_errors.HttpError
+	ChangeColumnOrder(model columnDTO.UpdateColumnOrderDTO) *app_errors.HttpError
 }
 
-func NewColumnController(columnService *columnService.ColumnService) *ColumnController {
+func NewColumnController(columnService ColumnService) *ColumnController {
 	return &ColumnController{
 		columnService: columnService,
 	}
@@ -50,7 +57,9 @@ func (p *ColumnController) CreateColumn(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // UpdateColumn
@@ -82,7 +91,9 @@ func (p *ColumnController) UpdateColumn(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // DeleteColumn
@@ -107,7 +118,9 @@ func (p *ColumnController) DeleteColumn(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // UpdateColumnOrder
@@ -131,5 +144,7 @@ func (p *ColumnController) UpdateColumnOrder(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }

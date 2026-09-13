@@ -1,4 +1,4 @@
-package controllers
+package projectController
 
 import (
 	"fmt"
@@ -6,17 +6,24 @@ import (
 	"net/http"
 	projectDTO "pm-with-essence/cmd/api/model/projectDTO"
 	"pm-with-essence/cmd/api/model/responseDTO"
-	"pm-with-essence/cmd/service/projectService"
+	"pm-with-essence/internal/api/app_errors"
+	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type ProjectController struct {
-	projectService *projectService.ProjectService
+	projectService ProjectService
+}
+type ProjectService interface {
+	CreateProject(model projectDTO.ProjectDTO) *app_errors.HttpError
+	DeleteProject(projectId uuid.UUID) *app_errors.HttpError
+	GetProject(projectId uuid.UUID) (*pm_entity.Project, *app_errors.HttpError)
+	UpdateProject(projectID uuid.UUID, model projectDTO.ProjectDTO) *app_errors.HttpError
 }
 
-func NewProjectController(projectService *projectService.ProjectService) *ProjectController {
+func NewProjectController(projectService ProjectService) *ProjectController {
 	return &ProjectController{
 		projectService: projectService,
 	}
@@ -52,8 +59,9 @@ func (ps *ProjectController) CreateProject(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
-	return
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // DeleteProject
@@ -78,7 +86,9 @@ func (ps *ProjectController) DeleteProject(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // UpdateProject
@@ -110,7 +120,9 @@ func (ps *ProjectController) UpdateProject(c *gin.Context) {
 		c.JSON(err1.Code, err1)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 func (ps *ProjectController) GetAllProjects(c *gin.Context) {

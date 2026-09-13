@@ -28,6 +28,6 @@ func (s *UserStorage) FindUser(email string) (*pm_entity.User, error) {
 
 	return &user, nil
 }
-func (s *UserStorage) CreateNewUser(user pm_entity.User) error {
+func (s *UserStorage) CreateNewUser(user *pm_entity.User) error {
 	return s.db.Model(pm_entity.User{}).Create(&user).Error
 }

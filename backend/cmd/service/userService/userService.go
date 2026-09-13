@@ -2,9 +2,7 @@ package userService
 
 import (
 	"errors"
-	"fmt"
 	"pm-with-essence/cmd/api/model/userDTO"
-	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 	"pm-with-essence/internal/validator"
@@ -15,25 +13,50 @@ import (
 )
 
 type UserService struct {
-	storage *repository.UserStorage
+	storage UserStorage
+}
+type UserStorage interface {
+	FindUser(email string) (*pm_entity.User, error)
+	CreateNewUser(user *pm_entity.User) error
 }
 
-func NewUserService(storage *repository.UserStorage) *UserService {
+func NewUserService(storage UserStorage) *UserService {
 	return &UserService{
 		storage: storage,
 	}
 }
 func (us *UserService) CreateNewUser(dto userDTO.RegisterDTO) *app_errors.HttpError {
-	fmt.Printf(dto.Email, dto.Password, dto.UserName)
+	email := strings.TrimSpace(strings.ToLower(dto.Email))
 
-	if err := validator.ValidatePassword(dto.Password); err != nil {
+	err := us.IsUserExist(email)
+	if err != nil {
 		return err
 	}
 
-	email := strings.TrimSpace(strings.ToLower(dto.Email))
+	if err = validator.ValidatePassword(dto.Password); err != nil {
+		return err
+	}
 
-	user, err := us.storage.FindUser(email)
-	fmt.Println(user)
+	hashPassword, err1 := bcrypt.GenerateFromPassword(
+		[]byte(dto.Password),
+		bcrypt.DefaultCost,
+	)
+	if err1 != nil {
+		return app_errors.NewPasswordHashError(err1, "Failed to hash password")
+	}
+
+	newUser := pm_entity.CreateUserEntity(dto.UserName, string(hashPassword), email)
+
+	err2 := us.storage.CreateNewUser(&newUser)
+	if err2 != nil {
+		return app_errors.NewPostgresWriteError(err2, "Postgres write user data error")
+	}
+
+	return nil
+}
+
+func (us *UserService) IsUserExist(email string) *app_errors.HttpError {
+	_, err := us.storage.FindUser(email)
 
 	if err == nil {
 		return app_errors.NewBadRequestError(
@@ -46,20 +69,6 @@ func (us *UserService) CreateNewUser(dto userDTO.RegisterDTO) *app_errors.HttpEr
 			err,
 			"Failed to read user from database",
 		)
-	}
-
-	hashPassword, err := bcrypt.GenerateFromPassword(
-		[]byte(dto.Password),
-		bcrypt.DefaultCost,
-	)
-	if err != nil {
-		return app_errors.NewPasswordHashError(err, "Failed to hash password")
-	}
-	println(string(hashPassword))
-	newUser := pm_entity.CreateUserEntity(dto.UserName, string(hashPassword), email)
-	err = us.storage.CreateNewUser(newUser)
-	if err != nil {
-		return app_errors.NewPostgresWriteError(err, "Postgres write user data error")
 	}
 	return nil
 }

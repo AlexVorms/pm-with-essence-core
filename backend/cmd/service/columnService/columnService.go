@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"pm-with-essence/cmd/api/model/columnDTO"
-	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
@@ -13,11 +12,20 @@ import (
 )
 
 type ColumnService struct {
-	boardStorage  *repository.BoardStorage
-	columnStorage *repository.ColumnStorage
+	boardStorage  BoardStorage
+	columnStorage ColumnStorage
+}
+type BoardStorage interface {
+	GetBoard(boardID uuid.UUID) (*pm_entity.Board, error)
+}
+type ColumnStorage interface {
+	Create(column *pm_entity.Column) error
+	GetColumn(columnID uuid.UUID) (*pm_entity.Column, error)
+	UpdateColumn(column *pm_entity.Column) error
+	DeleteColumn(columnID uuid.UUID) error
 }
 
-func NewColumnService(columnStorage *repository.ColumnStorage, storage *repository.BoardStorage) *ColumnService {
+func NewColumnService(columnStorage ColumnStorage, storage BoardStorage) *ColumnService {
 	return &ColumnService{
 		columnStorage: columnStorage,
 		boardStorage:  storage,

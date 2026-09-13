@@ -3,7 +3,6 @@ package projectService
 import (
 	"errors"
 	"pm-with-essence/cmd/api/model/projectDTO"
-	"pm-with-essence/cmd/repository"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 
@@ -12,10 +11,16 @@ import (
 )
 
 type ProjectService struct {
-	projectStorage *repository.ProjectStorage
+	projectStorage ProjectStorage
+}
+type ProjectStorage interface {
+	CreateProject(project pm_entity.Project) error
+	GetProject(projectId uuid.UUID) (error, *pm_entity.Project)
+	DeleteProject(projectID uuid.UUID) error
+	UpdateProject(project pm_entity.Project) error
 }
 
-func NewProjectService(projectStorage *repository.ProjectStorage) *ProjectService {
+func NewProjectService(projectStorage ProjectStorage) *ProjectService {
 	return &ProjectService{
 		projectStorage: projectStorage,
 	}

@@ -1,21 +1,30 @@
-package controllers
+package taskController
 
 import (
 	"fmt"
 	"log"
 	"net/http"
+	"pm-with-essence/cmd/api/model/responseDTO"
 	"pm-with-essence/cmd/api/model/taskDTO"
-	"pm-with-essence/cmd/service/taskService"
+	"pm-with-essence/internal/api/app_errors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type TaskController struct {
-	taskService *taskService.TaskService
+	taskService TaskService
+}
+type TaskService interface {
+	CreateTask(columnID uuid.UUID, model taskDTO.TaskDTO) *app_errors.HttpError
+	CompleteTask(taskID uuid.UUID) *app_errors.HttpError
+	UpdateTask(taskID uuid.UUID, model taskDTO.TaskDTO) *app_errors.HttpError
+	DeleteTask(taskID uuid.UUID) *app_errors.HttpError
+	GetTask(taskID uuid.UUID) (*taskDTO.GetTaskDTO, *app_errors.HttpError)
+	ChangeTaskColumn(taskID uuid.UUID, columnID uuid.UUID) *app_errors.HttpError
 }
 
-func NewTaskController(taskService *taskService.TaskService) *TaskController {
+func NewTaskController(taskService TaskService) *TaskController {
 	return &TaskController{
 		taskService: taskService,
 	}
@@ -51,7 +60,9 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // DeleteTask
@@ -76,7 +87,9 @@ func (tc *TaskController) DeleteTask(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // GetTask
@@ -144,7 +157,9 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // ChangeTaskColumn
@@ -177,7 +192,9 @@ func (tc *TaskController) ChangeTaskColumn(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }
 
 // FinishTask
@@ -202,5 +219,7 @@ func (tc *TaskController) FinishTask(c *gin.Context) {
 		c.JSON(err.Code, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Success"})
+	c.JSON(http.StatusOK, responseDTO.MessageResponse{
+		Message: "success",
+	})
 }

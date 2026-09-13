@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"pm-with-essence/cmd/api/model/boardDTO"
 	"pm-with-essence/cmd/api/model/columnDTO"
-	"pm-with-essence/cmd/repository"
-	"pm-with-essence/cmd/service/columnService"
-	"pm-with-essence/cmd/service/projectService"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
 	"pm-with-essence/internal/mapper"
@@ -17,14 +14,28 @@ import (
 )
 
 type BoardService struct {
-	boardStorage   *repository.BoardStorage
-	columnService  *columnService.ColumnService
-	projectService *projectService.ProjectService
+	boardStorage   BoardStorage
+	columnService  ColumnService
+	projectService ProjectService
+}
+type BoardStorage interface {
+	GetBoard(boardID uuid.UUID) (*pm_entity.Board, error)
+	GetProjectBoards(projectID uuid.UUID) ([]*pm_entity.Board, error)
+	DeleteBoard(boardID uuid.UUID) error
+	CreateBoard(board *pm_entity.Board) error
+	UpdateBoard(board *pm_entity.Board) error
+}
+type ColumnService interface {
+	CreateColumn(boardID uuid.UUID, model columnDTO.ColumnDTO) *app_errors.HttpError
+}
+type ProjectService interface {
+	GetProject(projectId uuid.UUID) (*pm_entity.Project, *app_errors.HttpError)
+	IsProjectExist(projectId uuid.UUID) (bool, error)
 }
 
-func NewBoardService(boardStorage *repository.BoardStorage,
-	service *columnService.ColumnService,
-	projectService *projectService.ProjectService) *BoardService {
+func NewBoardService(boardStorage BoardStorage,
+	service ColumnService,
+	projectService ProjectService) *BoardService {
 	return &BoardService{
 		boardStorage:   boardStorage,
 		columnService:  service,
