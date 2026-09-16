@@ -16,7 +16,7 @@ type AuthController struct {
 }
 
 type AuthService interface {
-	Login(model userDTO.LoginDTO) (*responseDTO.LoginResponse, *app_errors.HttpError)
+	Login(model userDTO.LoginDTO) (*string, *app_errors.HttpError)
 }
 
 func NewAuthController(authService AuthService) *AuthController {
@@ -37,17 +37,24 @@ func (u *AuthController) Login(c *gin.Context) {
 	var loginDTO userDTO.LoginDTO
 	if err := c.ShouldBindJSON(&loginDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	token, err := u.authService.Login(loginDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
-	//TODO:Сделать структуру для возвращения токена
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, responseDTO.LoginResponse{
+		Message:     "Success",
+		TokenType:   "Bearer",
+		AccessToken: *token,
+	})
 }
 
 //TODO:Обновление токена

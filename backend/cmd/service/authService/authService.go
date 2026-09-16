@@ -2,7 +2,6 @@ package authService
 
 import (
 	"errors"
-	"pm-with-essence/cmd/api/model/responseDTO"
 	"pm-with-essence/cmd/api/model/userDTO"
 	"pm-with-essence/internal/api/app_errors"
 	pm_entity "pm-with-essence/internal/domain/entity/pm-entity"
@@ -28,7 +27,7 @@ func NewAuthService(storage UserStorage, jwtService JWTService) *AuthService {
 		jwtService: jwtService,
 	}
 }
-func (as *AuthService) Login(model userDTO.LoginDTO) (*responseDTO.LoginResponse, *app_errors.HttpError) {
+func (as *AuthService) Login(model userDTO.LoginDTO) (*string, *app_errors.HttpError) {
 	user, err := as.storage.FindUser(model.Email)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -54,8 +53,5 @@ func (as *AuthService) Login(model userDTO.LoginDTO) (*responseDTO.LoginResponse
 		return nil, nil
 	}
 
-	return &responseDTO.LoginResponse{
-		AccessToken: token,
-		TokenType:   "Bearer",
-	}, nil
+	return &token, nil
 }

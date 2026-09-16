@@ -38,17 +38,25 @@ func (u *UserController) Register(c *gin.Context) {
 	var registerDTO userDTO.RegisterDTO
 	if err := c.ShouldBindJSON(&registerDTO); err != nil {
 		log.Printf("error parsing json: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
+
 	err := u.userService.CreateNewUser(registerDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
+
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 

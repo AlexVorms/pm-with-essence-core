@@ -7,6 +7,7 @@ type ErrorResponse struct {
 type LoginResponse struct {
 	AccessToken string `json:"accessToken" example:"eyJhbGciOiJIUzI1NiIs..."`
 	TokenType   string `json:"tokenType" example:"Bearer"`
+	Message     string `json:"message" example:"Access token"`
 }
 type MessageResponse struct {
 	Message string `json:"message"`

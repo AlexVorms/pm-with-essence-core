@@ -43,24 +43,30 @@ func (b *BoardController) CreateBoard(c *gin.Context) {
 	projectId := c.Param("projectId")
 	parsedUUID, err1 := uuid.Parse(projectId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	var BoardDTO boardDTO.BoardDTO
 	if err := c.ShouldBindJSON(&BoardDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := b.boardService.CreateBoard(parsedUUID, BoardDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -76,18 +82,22 @@ func (b *BoardController) DeleteBoard(c *gin.Context) {
 	boardId := c.Param("boardId")
 	parsedUUID, err1 := uuid.Parse(boardId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	err := b.boardService.DeleteBoard(parsedUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -103,14 +113,18 @@ func (b *BoardController) GetBoard(c *gin.Context) {
 	boardId := c.Param("boardId")
 	parsedUUID, err1 := uuid.Parse(boardId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	board, err := b.boardService.GetBoard(parsedUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, board)
@@ -128,14 +142,18 @@ func (b *BoardController) GetBoards(c *gin.Context) {
 	projectId := c.Param("projectId")
 	parsedUUID, err1 := uuid.Parse(projectId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	boards, err := b.boardService.GetAllBoards(parsedUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, boards)
@@ -154,23 +172,29 @@ func (b *BoardController) UpdateBoard(c *gin.Context) {
 	boardId := c.Param("boardId")
 	parsedUUID, err1 := uuid.Parse(boardId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	var BoardDTO boardDTO.BoardDTO
 	if err := c.ShouldBindJSON(&BoardDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := b.boardService.UpdateBoard(parsedUUID, BoardDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }

@@ -41,24 +41,30 @@ func (p *ColumnController) CreateColumn(c *gin.Context) {
 	boardID := c.Param("boardID")
 	parsedUUID, err1 := uuid.Parse(boardID)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	var ColumnDTO columnDTO.ColumnDTO
 	if err := c.ShouldBindJSON(&ColumnDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := p.columnService.CreateColumn(parsedUUID, ColumnDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -75,24 +81,30 @@ func (p *ColumnController) UpdateColumn(c *gin.Context) {
 	columnID := c.Param("columnID")
 	parsedUUID, err1 := uuid.Parse(columnID)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	var ColumnUpdateDTO columnDTO.ColumnUpdateDTO
 	if err := c.ShouldBindJSON(&ColumnUpdateDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := p.columnService.UpdateColumn(parsedUUID, ColumnUpdateDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -108,18 +120,22 @@ func (p *ColumnController) DeleteColumn(c *gin.Context) {
 	columnID := c.Param("columnID")
 	parsedUUID, err1 := uuid.Parse(columnID)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	err := p.columnService.DeleteColumn(parsedUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -135,16 +151,20 @@ func (p *ColumnController) UpdateColumnOrder(c *gin.Context) {
 	var updateColumnOrderDTO columnDTO.UpdateColumnOrderDTO
 	if err := c.ShouldBindJSON(&updateColumnOrderDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := p.columnService.ChangeColumnOrder(updateColumnOrderDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }

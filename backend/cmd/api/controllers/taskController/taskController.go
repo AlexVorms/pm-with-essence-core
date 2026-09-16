@@ -43,25 +43,31 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 	columnId := c.Param("columnId")
 	columnUUID, err1 := uuid.Parse(columnId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 
 	var newTaskDTO taskDTO.TaskDTO
 	if err := c.ShouldBindJSON(&newTaskDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := tc.taskService.CreateTask(columnUUID, newTaskDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -77,18 +83,22 @@ func (tc *TaskController) DeleteTask(c *gin.Context) {
 	taskId := c.Param("taskId")
 	taskUUID, err1 := uuid.Parse(taskId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	err := tc.taskService.DeleteTask(taskUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -104,17 +114,21 @@ func (tc *TaskController) GetTask(c *gin.Context) {
 	taskId := c.Param("taskId")
 	taskUUID, err1 := uuid.Parse(taskId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
-	task, err := tc.taskService.GetTask(taskUUID)
+	taskResponse, err := tc.taskService.GetTask(taskUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
-	c.JSON(http.StatusOK, task)
+	c.JSON(http.StatusOK, taskResponse)
 }
 
 // GetAllTasks
@@ -141,24 +155,30 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 	taskId := c.Param("taskId")
 	taskUUID, err1 := uuid.Parse(taskId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	var newTaskDTO taskDTO.TaskDTO
 	if err := c.ShouldBindJSON(&newTaskDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := tc.taskService.UpdateTask(taskUUID, newTaskDTO)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -175,25 +195,31 @@ func (tc *TaskController) ChangeTaskColumn(c *gin.Context) {
 	taskId := c.Param("taskId")
 	taskUUID, err1 := uuid.Parse(taskId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	columnId := c.Param("columnId")
 	columnUUID, err1 := uuid.Parse(columnId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	err := tc.taskService.ChangeTaskColumn(taskUUID, columnUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -209,17 +235,21 @@ func (tc *TaskController) FinishTask(c *gin.Context) {
 	taskId := c.Param("taskId")
 	taskUUID, err1 := uuid.Parse(taskId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	err := tc.taskService.CompleteTask(taskUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }

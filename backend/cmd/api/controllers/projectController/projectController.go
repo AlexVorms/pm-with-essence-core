@@ -48,7 +48,9 @@ func (ps *ProjectController) CreateProject(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&newProjectDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err := ps.projectService.CreateProject(newProjectDTO)
@@ -60,7 +62,7 @@ func (ps *ProjectController) CreateProject(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -76,18 +78,22 @@ func (ps *ProjectController) DeleteProject(c *gin.Context) {
 	projectId := c.Param("projectId")
 	parsedUUID, err1 := uuid.Parse(projectId)
 	if err1 != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err1)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
+		fmt.Println("parsing UUID error: ", err1)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	err := ps.projectService.DeleteProject(parsedUUID)
 	if err != nil {
 		fmt.Println("error occurred: " + err.Error())
-		c.JSON(err.Code, err)
+		c.JSON(err.Code, responseDTO.ErrorResponse{
+			Message: err.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -104,24 +110,30 @@ func (ps *ProjectController) UpdateProject(c *gin.Context) {
 	projectId := c.Param("projectId")
 	parsedUUID, err := uuid.Parse(projectId)
 	if err != nil {
-		fmt.Println("Ошибка парсинга UUID: ", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Println("parsing UUID error: ", err)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	var newProjectDTO projectDTO.ProjectDTO
 	if err = c.ShouldBindJSON(&newProjectDTO); err != nil {
 		log.Printf("error parsing json: " + err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Invalid request body",
+		})
 		return
 	}
 	err1 := ps.projectService.UpdateProject(parsedUUID, newProjectDTO)
 	if err1 != nil {
 		fmt.Println("error occurred: " + err1.Error())
-		c.JSON(err1.Code, err1)
+		c.JSON(err1.Code, responseDTO.ErrorResponse{
+			Message: err1.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, responseDTO.MessageResponse{
-		Message: "success",
+		Message: "Success",
 	})
 }
 
@@ -141,13 +153,18 @@ func (ps *ProjectController) GetProject(c *gin.Context) {
 	projectId := c.Param("projectId")
 	parsedUUID, err := uuid.Parse(projectId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Println("parsing UUID error: ", err)
+		c.JSON(http.StatusBadRequest, responseDTO.ErrorResponse{
+			Message: "Parsing UUID error",
+		})
 		return
 	}
 	project, err1 := ps.projectService.GetProject(parsedUUID)
 	if err1 != nil {
 		fmt.Println("error occurred: " + err1.Error())
-		c.JSON(err1.Code, err1)
+		c.JSON(err1.Code, responseDTO.ErrorResponse{
+			Message: err1.Message,
+		})
 		return
 	}
 	c.JSON(http.StatusOK, project)
